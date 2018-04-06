@@ -1,0 +1,6 @@
+rootProject.name = 'store-service'
+include 'store-common'
+include 'store-biz'
+include 'store-web'
+include 'store-shiro'
+
