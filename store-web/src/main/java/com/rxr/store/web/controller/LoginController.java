@@ -1,5 +1,7 @@
 package com.rxr.store.web.controller;
 
+import com.rxr.store.web.common.RestResponse;
+import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -16,8 +18,11 @@ import java.util.Map;
 @RestController
 public class LoginController {
 
-    @RequestMapping("/ajaxLogin")
-    public String login(String userName, String password){
+    @RequestMapping("/login")
+    public RestResponse login(@Param("userName") String userName, @Param("password") String password){
+
+        RestResponse restResponse = new RestResponse();
+
         Map<String,Object> result = new HashMap<>(10);
         Subject subject = SecurityUtils.getSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(userName, password);
@@ -26,20 +31,26 @@ public class LoginController {
             try {
                 subject.login(token);
                 result.put("token", subject.getSession().getId());
-                result.put("msg", "登录成功");
+                restResponse.setResult(result);
+                restResponse.setCode(0);
+                restResponse.setMsg("登录成功");
             } catch (IncorrectCredentialsException e) {
-                result.put("msg", "密码错误");
+                restResponse.setCode(1);
+                restResponse.setMsg("密码错误");
             } catch (LockedAccountException e) {
-                result.put("msg", "登录失败，该用户已被冻结");
+                restResponse.setCode(2);
+                restResponse.setMsg("登录失败，该用户已被冻结");
             } catch (AuthenticationException e) {
-                result.put("msg", "该用户不存在");
+                restResponse.setCode(3);
+                restResponse.setMsg("该用户不存在");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }else{
-            result.put("msg", "The current user is logged in");
+            restResponse.setCode(4);
+            restResponse.setMsg("The current user is logged in");
         }
-        return result.toString();
+        return restResponse;
     }
 
 }
