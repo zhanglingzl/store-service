@@ -11,8 +11,9 @@ spring:
     add-mappings: false
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     show-sql: true
+    open-in-view: true
 
 
 

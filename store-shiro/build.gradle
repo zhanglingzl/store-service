@@ -2,6 +2,6 @@
 dependencies {
 //    compile project(':store-web')
     compile project(':store-biz')
-    compile group: 'org.apache.shiro', name: 'shiro-all', version: '1.4.0'
+    compile group: 'org.apache.shiro', name: 'shiro-spring', version: '1.4.0'
     compile group: 'org.crazycake', name: 'shiro-redis', version: '2.8.24'
 }
