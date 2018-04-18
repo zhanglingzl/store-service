@@ -1,7 +1,8 @@
-package com.rxr.store.common.model;
+package com.rxr.store.common.entities;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@ToString
 @Table(name = "sys_permission")
 public class Permission extends BaseEntity {
     @Column(name = "per_resource_type")

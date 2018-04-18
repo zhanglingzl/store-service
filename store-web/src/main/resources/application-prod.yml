@@ -25,11 +25,11 @@ spring:
 
 
 #mybatis配置
-mybatis:
-  type-aliases-package: com.rxr.store.common.model
-  configuration:
-    cache-enabled: false
-    map-underscore-to-camel-case: true
-    use-generated-keys: true
-    default-executor-type: reuse
-    default-statement-timeout: 600
+#mybatis:
+#  type-aliases-package: com.rxr.store.common.entities
+#  configuration:
+#    cache-enabled: false
+#    map-underscore-to-camel-case: true
+#    use-generated-keys: true
+#    default-executor-type: reuse
+#    default-statement-timeout: 600

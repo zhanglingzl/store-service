@@ -1,4 +1,4 @@
-package com.rxr.store.common.model;
+package com.rxr.store.common.entities;
 
 import lombok.Getter;
 import lombok.Setter;

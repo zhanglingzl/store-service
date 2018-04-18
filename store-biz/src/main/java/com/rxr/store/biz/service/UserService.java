@@ -1,9 +1,10 @@
 package com.rxr.store.biz.service;
 
-import com.rxr.store.common.model.User;
+import com.rxr.store.common.entities.User;
 
 import java.util.List;
 
 public interface UserService {
-    List<User> getAllUser();
+    List<User> findAllUser();
+    User findUserByLoginName(String loginName);
 }

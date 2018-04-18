@@ -1,4 +1,4 @@
-package com.rxr.store.core;
+package com.rxr.store.core.util;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;

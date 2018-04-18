@@ -1,12 +1,10 @@
 package com.rxr.store.web.controller;
 
-import com.rxr.store.common.model.Guest;
-import com.rxr.store.web.repository.IGuestRepository;
+import com.rxr.store.common.entities.Guest;
 import com.rxr.store.web.service.IGuestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;

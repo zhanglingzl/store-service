@@ -1,7 +1,8 @@
-package com.rxr.store.common.model;
+package com.rxr.store.common.entities;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -9,7 +10,9 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@ToString
 @Table(name = "rxr_user")
+@JsonIgnoreProperties({"password", "salt"})
 public class User extends BaseEntity{
     @Column(name = "user_login_name", unique = true)
     private String loginName;
@@ -27,6 +30,8 @@ public class User extends BaseEntity{
     private String wechat;
     @Column(name = "user_state")
     private Integer state;
+    @Transient
+    private String token;
 
     @ManyToMany
     @JoinTable(name = "sys_user_role",
@@ -34,4 +39,16 @@ public class User extends BaseEntity{
             inverseJoinColumns = {@JoinColumn(name = " role_id")}
     )
     private List<Role> roles;
+
+    public User() { }
+
+    public User(String loginName, String password, String salt) {
+        this.loginName = loginName;
+        this.password = password;
+        this.salt = salt;
+    }
+    @JsonIgnore
+    public String getCredentialsSalt() {
+        return this.loginName + this.salt;
+    }
 }

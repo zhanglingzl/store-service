@@ -1,6 +1,6 @@
 package com.rxr.store.web.service;
 
-import com.rxr.store.common.model.Guest;
+import com.rxr.store.common.entities.Guest;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package com.rxr.store.web.service.impl;
 
 import com.google.common.base.Strings;
-import com.rxr.store.common.model.Guest;
+import com.rxr.store.common.entities.Guest;
 import com.rxr.store.web.repository.IGuestRepository;
 import com.rxr.store.web.service.IGuestService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,8 @@
-package com.rxr.store.common.model;
+package com.rxr.store.common.entities;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,6 +11,7 @@ import javax.persistence.Table;
 @Entity
 @Setter
 @Getter
+@ToString
 @Table(name = "rxr_agency")
 public class Agency extends BaseEntity{
 

@@ -1,6 +1,6 @@
 package com.rxr.store.web.repository;
 
-import com.rxr.store.common.model.Guest;
+import com.rxr.store.common.entities.Guest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
