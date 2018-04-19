@@ -2,7 +2,9 @@ package com.rxr.store.common.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.List;
@@ -29,11 +31,11 @@ public class User extends BaseEntity{
     @Column(name = "user_wechat", unique = true)
     private String wechat;
     @Column(name = "user_state")
-    private Integer state;
+    private Integer state=0;
     @Transient
     private String token;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "sys_user_role",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = " role_id")}

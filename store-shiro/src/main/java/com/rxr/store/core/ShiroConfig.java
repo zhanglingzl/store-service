@@ -36,7 +36,7 @@ public class ShiroConfig {
 
         DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
         chainDefinition.addPathDefinition("/login", "anon");
-        chainDefinition.addPathDefinition("/logout", "anon");
+        chainDefinition.addPathDefinition("/logout", "logout");
         chainDefinition.addPathDefinition("/**", "jwt");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(chainDefinition.getFilterChainMap());

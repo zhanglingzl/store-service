@@ -6,14 +6,13 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.time.DateUtils;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Date;
 @Slf4j
 public class JWTHelper {
 
     private static final String  ISSUER = "rxr_user";
+    private static final long EXPIRE_TIME = 30;
 
 
     public static String createToken(String loginName, String password){
@@ -22,7 +21,7 @@ public class JWTHelper {
             JWTCreator.Builder builder = JWT.create()
                     .withClaim("loginName", loginName)
                     .withIssuer(ISSUER)
-                    .withExpiresAt(DateUtils.addDays(new Date(), 1));
+                    .withExpiresAt(DateHelper.plusSecond(EXPIRE_TIME));
             return builder.sign(algorithm);
         } catch (IllegalArgumentException | UnsupportedEncodingException e) {
             throw new RuntimeException(e);

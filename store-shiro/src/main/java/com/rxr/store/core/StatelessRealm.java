@@ -36,8 +36,7 @@ public class StatelessRealm extends AuthorizingRealm {
      */
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-        String loginName = JWTHelper.getLoginName(principals.toString());
-        User user = userService.findUserByLoginName(loginName);
+        User user = (User) principals.getPrimaryPrincipal();
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         user.getRoles().forEach(role -> {
             authorizationInfo.addRole(role.getRole());
@@ -67,9 +66,9 @@ public class StatelessRealm extends AuthorizingRealm {
         if(!JWTHelper.verify(token,loginName, user.getPassword())) {
             throw new AuthenticationException("Username or password error");
         }
-        System.out.println(getName());
+        user.setToken(token);
         return new SimpleAuthenticationInfo(
-                token,
+                user,
                 token,
                 getName()
         );

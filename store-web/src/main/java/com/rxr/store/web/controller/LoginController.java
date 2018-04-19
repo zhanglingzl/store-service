@@ -2,8 +2,8 @@ package com.rxr.store.web.controller;
 
 import com.rxr.store.biz.service.UserService;
 import com.rxr.store.common.entities.User;
-import com.rxr.store.core.util.JWTHelper;
 import com.rxr.store.core.JWTToken;
+import com.rxr.store.core.util.JWTHelper;
 import com.rxr.store.core.util.PasswordHelper;
 import com.rxr.store.web.common.RestResponse;
 import org.apache.shiro.SecurityUtils;
@@ -37,8 +37,6 @@ public class LoginController {
                     ,currUser.getPassword()));
             subject.login(jwtToken);
         }
-
-
         return RestResponse.success(subject.getPrincipal());
     }
 
