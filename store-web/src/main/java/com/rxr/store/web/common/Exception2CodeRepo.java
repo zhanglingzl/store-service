@@ -1,6 +1,7 @@
 package com.rxr.store.web.common;
 
 import com.google.common.collect.ImmutableMap;
+import com.rxr.store.web.common.dto.RestCode;
 import com.rxr.store.web.common.exception.WithTypeException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;

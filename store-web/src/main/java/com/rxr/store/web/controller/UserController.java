@@ -2,10 +2,14 @@ package com.rxr.store.web.controller;
 
 import com.rxr.store.biz.service.UserService;
 import com.rxr.store.common.entities.User;
-import com.rxr.store.web.common.RestResponse;
+import com.rxr.store.web.common.dto.PageParams;
+import com.rxr.store.web.common.dto.RestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -34,8 +38,8 @@ public class UserController {
     }
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public RestResponse<Page<User>> getUser(User user) {
-        Page<User> users = userService.findAllUser(user);
-        return RestResponse.success(users);
+    public RestResponse<List<User>> getUser(User user, PageParams pageParams) {
+        Page<User> users = userService.findAllUser(user, pageParams.pageable());
+        return RestResponse.success(users.getContent());
     }
 }

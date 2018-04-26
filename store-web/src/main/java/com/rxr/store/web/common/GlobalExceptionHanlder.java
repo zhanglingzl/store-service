@@ -1,5 +1,7 @@
 package com.rxr.store.web.common;
 
+import com.rxr.store.web.common.dto.RestCode;
+import com.rxr.store.web.common.dto.RestResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

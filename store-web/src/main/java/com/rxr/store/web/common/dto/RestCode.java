@@ -1,4 +1,4 @@
-package com.rxr.store.web.common;
+package com.rxr.store.web.common.dto;
 
 public enum  RestCode {
     OK(0,"ok"),

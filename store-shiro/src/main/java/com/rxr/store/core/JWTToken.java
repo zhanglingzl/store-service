@@ -20,8 +20,8 @@ public class JWTToken implements AuthenticationToken {
     }
 
     private String format(String token) {
-        if(StringUtils.isNotBlank(this.token) && this.token.startsWith("Bearer")) {
-            this.token = this.token.replace("Bearer","").trim();
+        if(StringUtils.isNotBlank(token) && token.startsWith("Bearer")) {
+            token = token.replace("Bearer","").trim();
         }
         return token;
     }

@@ -6,9 +6,7 @@ import com.rxr.store.common.entities.User;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -31,9 +29,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> findAllUser(User user) {
-        Pageable pageable = PageRequest.of(0,10, new Sort(Sort.Direction.ASC,"id"));
-        Page<User> page = userRepository.findAll((root, query, criteriaBuilder) -> {
+    public Page<User> findAllUser(User user, Pageable pageable) {
+        return userRepository.findAll((root, query, criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.conjunction();
             if(StringUtils.isNotBlank(user.getLoginName())) {
                 predicate.getExpressions()
@@ -43,12 +40,11 @@ public class UserServiceImpl implements UserService {
                 predicate.getExpressions()
                         .add(criteriaBuilder.like(root.get("name"),user.getName()));
             }
-            if(user.getState() != null) {
-                predicate.getExpressions()
-                        .add(criteriaBuilder.equal(root.get("state"),user.getState()));
-            }
+            //if(user.getState() != null && user.getState() != -3) {
+            //    predicate.getExpressions()
+            //            .add(criteriaBuilder.equal(root.get("state"),user.getState()));
+            //}
             return predicate;
         }, pageable);
-        return page;
     }
 }

@@ -5,7 +5,7 @@ import com.rxr.store.common.entities.User;
 import com.rxr.store.core.JWTToken;
 import com.rxr.store.core.util.JWTHelper;
 import com.rxr.store.core.util.PasswordHelper;
-import com.rxr.store.web.common.RestResponse;
+import com.rxr.store.web.common.dto.RestResponse;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.subject.Subject;
