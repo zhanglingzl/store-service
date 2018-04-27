@@ -3,6 +3,7 @@ package com.rxr.store.biz.service.impl;
 import com.rxr.store.biz.repositories.UserRepository;
 import com.rxr.store.biz.service.UserService;
 import com.rxr.store.common.entities.User;
+import com.rxr.store.common.form.UserForm;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
@@ -29,7 +30,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> findAllUser(User user, Pageable pageable) {
+    public Page<User> findAllUser(UserForm user, Pageable pageable) {
         return userRepository.findAll((root, query, criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.conjunction();
             if(StringUtils.isNotBlank(user.getLoginName())) {
@@ -38,12 +39,12 @@ public class UserServiceImpl implements UserService {
             }
             if(StringUtils.isNotBlank(user.getName())) {
                 predicate.getExpressions()
-                        .add(criteriaBuilder.like(root.get("name"),user.getName()));
+                        .add(criteriaBuilder.like(root.get("name"),"%"+user.getName()+"%"));
             }
-            //if(user.getState() != null && user.getState() != -3) {
-            //    predicate.getExpressions()
-            //            .add(criteriaBuilder.equal(root.get("state"),user.getState()));
-            //}
+            if(user.getState() != null) {
+                predicate.getExpressions()
+                        .add(criteriaBuilder.equal(root.get("state"),user.getState()));
+            }
             return predicate;
         }, pageable);
     }

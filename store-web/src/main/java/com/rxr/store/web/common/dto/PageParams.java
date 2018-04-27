@@ -1,11 +1,14 @@
 package com.rxr.store.web.common.dto;
 
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 import java.util.Optional;
+
 @Data
+@ToString
 public class PageParams {
     private static final Integer PAGE_NUMBER=0;
     private static final Integer PAGE_SIZE=10;
