@@ -17,17 +17,19 @@ public class PageParams {
     private String direction;
     private String sorter;
 
-    public PageParams() {
-        if(this.pageNumber == null || this.pageNumber < 1) {
+    public PageRequest pageable() {
+
+        if(this.pageNumber == null || this.pageNumber <= 1) {
             this.pageNumber = PAGE_NUMBER;
+        } else {
+            this.pageNumber -=1;
         }
-        this.pageNumber -=1;
+
+
         if(this.pageSize == null) {
             this.pageSize = PAGE_SIZE;
         }
-    }
 
-    public PageRequest pageable() {
         if(this.direction != null && this.sorter != null) {
             Optional<Sort.Direction> dire = Sort.Direction.fromOptionalString(direction);
             if(dire.isPresent()) {

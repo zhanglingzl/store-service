@@ -8,7 +8,7 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 public class Pagination {
-    private Integer pageSize;
     private Integer pageNumber;
+    private Integer pageSize;
     private Long total;
 }

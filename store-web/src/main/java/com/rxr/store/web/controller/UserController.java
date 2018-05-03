@@ -3,6 +3,7 @@ package com.rxr.store.web.controller;
 import com.rxr.store.biz.service.UserService;
 import com.rxr.store.common.entities.User;
 import com.rxr.store.common.form.UserForm;
+import com.rxr.store.web.common.dto.PageData;
 import com.rxr.store.web.common.dto.PageParams;
 import com.rxr.store.web.common.dto.RestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +40,8 @@ public class UserController {
     }
 
     @RequestMapping(value = "/user", method = RequestMethod.GET)
-    public RestResponse<Page<User>> findAllUser(UserForm user, PageParams pageParams) {
+    public RestResponse<PageData<User>> findAllUser(UserForm user, PageParams pageParams) {
         Page<User> users = userService.findAllUser(user, pageParams.pageable());
-        return RestResponse.success(users);
+        return RestResponse.success(PageData.bulid(users));
     }
 }

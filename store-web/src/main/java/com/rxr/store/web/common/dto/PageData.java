@@ -12,7 +12,11 @@ public class PageData<T> {
 
     public PageData(Page<T> page) {
         this.data = page.getContent();
-        this.pagination = new Pagination(page.getNumber(),
-                page.getSize(),page.getTotalElements());
+        this.pagination = new Pagination(page.getNumber()+1,
+                page.getSize(), page.getTotalElements());
+    }
+
+    public static <T> PageData<T> bulid(Page<T> page) {
+        return new PageData<>(page);
     }
 }
