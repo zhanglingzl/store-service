@@ -2,6 +2,7 @@ apply plugin: 'org.springframework.boot'
 dependencies {
     compile project(':store-biz')
     compile project(':store-shiro')
+    compile project(':store-wechat')
 }
 
 

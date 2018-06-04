@@ -15,3 +15,11 @@ spring:
           log-slow-sql: true
           slow-sql-millis: 5000
           merge-sql: true
+server:
+  port: 8443
+  ssl:
+    key-store: store.jks
+    key-password: 1528634975109
+    key-store-type: JKS
+
+

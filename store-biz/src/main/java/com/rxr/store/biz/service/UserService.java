@@ -11,4 +11,5 @@ public interface UserService {
     List<User> findAllUser();
     User findUserByLoginName(String loginName);
     Page<User> findAllUser(UserForm user, Pageable pageable);
+    User findUserById(Long id);
 }

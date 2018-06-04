@@ -21,12 +21,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
-    public RestResponse<User> getUser(@PathVariable("id") Integer userId) {
-        List<User> users = userService.findAllUser();
-        return RestResponse.success(users.get(userId));
-    }
-
     //@RequestMapping(value = "/user", method = RequestMethod.GET)
     //public RestResponse<List<User>> getUser() {
     //
@@ -43,5 +37,11 @@ public class UserController {
     public RestResponse<PageData<User>> findAllUser(UserForm user, PageParams pageParams) {
         Page<User> users = userService.findAllUser(user, pageParams.pageable());
         return RestResponse.success(PageData.bulid(users));
+    }
+
+    @RequestMapping(value = "/user/{id}",method = RequestMethod.GET)
+    public RestResponse<User> findUserById(@PathVariable("id") Long id) {
+        User user = this.userService.findUserById(id);
+        return RestResponse.success(user);
     }
 }
