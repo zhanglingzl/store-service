@@ -9,7 +9,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -21,7 +20,7 @@ public class SecurityCorsConfiguration {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         List<String> urls = new ArrayList<>();
-        urls.add("http://localhost:4100");
+        urls.add("http://localhost:4200");
         urls.add("http://store.vicp.la:8888");
         config.setAllowedOrigins(urls);
         config.addAllowedHeader(CorsConfiguration.ALL);

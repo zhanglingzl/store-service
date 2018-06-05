@@ -14,7 +14,7 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class StatelessRealm extends AuthorizingRealm {
+public class AdminRealm extends AuthorizingRealm {
 
     @Autowired
     private UserService userService;

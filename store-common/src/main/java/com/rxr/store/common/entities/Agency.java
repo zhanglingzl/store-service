@@ -7,6 +7,7 @@ import lombok.ToString;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Setter
@@ -46,6 +47,9 @@ public class Agency extends BaseEntity{
     /**微信id*/
     @Column(name = "ag_wechat_id")
     private String wechatId;
+
+    @Transient
+    private String token;
 
 
 

@@ -1,12 +1,10 @@
 package com.rxr.store.wechat.service.impl;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.rxr.store.common.entities.Agency;
 import com.rxr.store.common.util.DateHelper;
 import com.rxr.store.wechat.model.AccessToken;
 import com.rxr.store.wechat.model.Message;
 import com.rxr.store.wechat.model.WechatAuth;
-import com.rxr.store.wechat.model.WechatInfo;
 import com.rxr.store.wechat.model.menu.Button;
 import com.rxr.store.wechat.model.menu.Menu;
 import com.rxr.store.wechat.repositories.WechatAuthRepository;
@@ -24,8 +22,6 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Optional;
-import java.util.logging.Level;
 
 @Log
 @Service
@@ -82,6 +78,10 @@ public class WechatAuthServiceImpl implements WechatAuthService {
         return JsonUtil.json2pojo(result.getBody(),Message.class);
     }
 
+    @Override
+    public Agency findAgencyByWechatId(String wechatId) {
+        return null;
+    }
 
     private void initAccessToken() throws Exception {
         String url = AuthUtil.ACCESS_TOKEN_URL.replace("APPID", AuthUtil.APP_ID)

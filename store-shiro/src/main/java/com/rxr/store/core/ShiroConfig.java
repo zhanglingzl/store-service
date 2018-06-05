@@ -2,6 +2,8 @@ package com.rxr.store.core;
 
 import com.rxr.store.core.filter.JWTFilter;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
+import org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy;
+import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.mgt.DefaultSessionStorageEvaluator;
 import org.apache.shiro.mgt.DefaultSubjectDAO;
 import org.apache.shiro.mgt.SecurityManager;
@@ -17,7 +19,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
 import javax.servlet.Filter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -36,7 +40,7 @@ public class ShiroConfig {
 
         DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
         chainDefinition.addPathDefinition("/login", "anon");
-        chainDefinition.addPathDefinition("/wechat/**", "anon");
+        chainDefinition.addPathDefinition("/wechat/auth/**", "anon");
         chainDefinition.addPathDefinition("/logout", "logout");
         chainDefinition.addPathDefinition("/**", "jwt");
 
@@ -49,12 +53,11 @@ public class ShiroConfig {
     @Bean
     public SecurityManager securityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        securityManager.setRealm(realm());
-        //securityManager.setCacheManager(new MemoryConstrainedCacheManager());
-        /*
-         * 关闭shiro自带的session，详情见文档
-         * http://shiro.apache.org/session-management.html#SessionManagement-StatelessApplications%28Sessionless%29
-         */
+        securityManager.setAuthenticator(modularRealmAuthenticator());
+        List<Realm> realms = new ArrayList<>();
+        realms.add(adminRealm());
+        realms.add(AgencyRealm());
+        securityManager.setRealms(realms);
         DefaultSubjectDAO subjectDAO = new DefaultSubjectDAO();
         DefaultSessionStorageEvaluator defaultSessionStorageEvaluator = new DefaultSessionStorageEvaluator();
         defaultSessionStorageEvaluator.setSessionStorageEnabled(false);
@@ -75,10 +78,22 @@ public class ShiroConfig {
         return credentialsMatcher;
     }
     @Bean
-    public Realm realm() {
-        StatelessRealm realm = new StatelessRealm();
+    public Realm adminRealm() {
+        AdminRealm realm = new AdminRealm();
         //realm.setCredentialsMatcher(hashedCredentialsMatcher());
         return realm;
+    }
+
+    @Bean
+    public Realm AgencyRealm() {
+        return new AgencyRealm();
+    }
+
+    @Bean
+    public ModularRealmAuthenticator modularRealmAuthenticator(){
+        ModularRealmAuthenticator modularRealmAuthenticator = new ModularRealmAuthenticator();
+        modularRealmAuthenticator.setAuthenticationStrategy(new AtLeastOneSuccessfulStrategy());
+        return modularRealmAuthenticator;
     }
 
     @Bean
