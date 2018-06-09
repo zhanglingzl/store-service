@@ -12,11 +12,14 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.persistence.criteria.Predicate;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
+
     @Resource
     private UserRepository userRepository;
     @Override
@@ -27,6 +30,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findUserByLoginName(String loginName) {
         return userRepository.findByLoginName(loginName);
+    }
+
+    @Override
+    public User findUserById(Long id) {
+        Optional<User> user = this.userRepository.findById(id);
+        if(user.isPresent()) {
+            return user.get();
+        }
+        return null;
     }
 
     @Override
@@ -48,4 +60,5 @@ public class UserServiceImpl implements UserService {
             return predicate;
         }, pageable);
     }
+
 }

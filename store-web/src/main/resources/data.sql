@@ -6,3 +6,4 @@ INSERT INTO rxr_user VALUES (0,'sys',sysdate(),
                              'e545c4349f6a4d5a9040adabc510fc52c5e3c74fc023dbcc8c4d4a94715c5fea',
                              'ed561d0470580ddb5eebf76f5d22223d',1,'',''
 );
+docker run --name local-mysql -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -d mysql --default-authentication-plugin=mysql_native_password mysql -uroot --protocol tcp

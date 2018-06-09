@@ -16,7 +16,6 @@ spring:
     open-in-view: true
 
 
-
 #mybatis配置
 #mybatis:
 #  type-aliases-package: com.rxr.store.common.entities

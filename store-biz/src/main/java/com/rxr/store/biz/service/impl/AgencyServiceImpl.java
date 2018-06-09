@@ -100,5 +100,8 @@ public class AgencyServiceImpl implements AgencyService{
         return list;
     }
 
-
+    @Override
+    public Agency findAgencyByWechatId(String wechatId) {
+        return null;
+    }
 }

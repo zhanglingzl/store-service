@@ -7,6 +7,7 @@ import lombok.ToString;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Setter
@@ -34,6 +35,22 @@ public class Agency extends BaseEntity{
     private String gender;
     @Column(name = "ag_name")
     private String name;
+    /**父级代理ID*/
+    @Column(name = "ag_pid")
+    private Long parentId;
+    /**代理等级*/
+    @Column(name = "ag_level")
+    private Integer level;
+    /**头像*/
+    @Column(name = "ag_avatar")
+    private String avatar;
+    /**微信id*/
+    @Column(name = "ag_wechat_id")
+    private String wechatId;
+
+    @Transient
+    private String token;
+
 
 
 }

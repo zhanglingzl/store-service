@@ -1,5 +1,6 @@
 package com.rxr.store.biz.service;
 
+import com.rxr.store.common.entities.Agency;
 import com.rxr.store.common.dto.AgencyDto;
 import com.rxr.store.common.form.AgencyForm;
 
@@ -24,5 +25,7 @@ public interface AgencyService {
      * @return
      */
     List<AgencyDto> getQuasiAgencies(AgencyForm agencyForm);
+
+    Agency findAgencyByWechatId(String wechatId);
 
 }

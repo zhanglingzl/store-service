@@ -16,6 +16,7 @@ public class GlobalExceptionHanlder {
     @ExceptionHandler(value = Throwable.class)
     @ResponseBody
     public RestResponse<Object> handler(HttpServletRequest request, HttpServletResponse resp, Throwable throwable){
+        log.info(request.getRequestURL().toString());
         log.error(throwable.getMessage(),throwable);
         RestCode restCode = Exception2CodeRepo.getCode(throwable);
         RestResponse<Object> response = new RestResponse<>(restCode.code,restCode.msg);
