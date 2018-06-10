@@ -5,7 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.sql.Timestamp;
 @Getter
 @Setter
 @ToString
@@ -16,12 +16,12 @@ public class BaseEntity {
     private Long id;
     @Column(name = "create_operator")
     private String createOperator;
-    @Column(name = "create_time")
-    private Date createTime;
+    @Column(name = "create_time",columnDefinition="timestamp default current_timestamp")
+    private Timestamp createTime;
     @Column(name = "update_operator")
     private String updateOperator;
-    @Column(name = "update_time")
-    private Date updateTime;
+    @Column(name = "update_time" ,columnDefinition="timestamp default current_timestamp on update current_timestamp")
+    private Timestamp updateTime;
 
     private String remark;
 }
