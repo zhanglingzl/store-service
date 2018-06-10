@@ -24,8 +24,18 @@ public interface AgencyService {
      * @param agencyForm
      * @return
      */
-    List<AgencyDto> getQuasiAgencies(AgencyForm agencyForm);
+    List<AgencyDto> getQuasiAgencies(AgencyForm agencyForm, int status);
 
     Agency findAgencyByWechatId(String wechatId);
+
+    /**
+     * 确认成为代理
+     */
+    void verifyAgency(Long id);
+
+    /**
+     * 确认升级
+     */
+    void verifyUpdate(Long id);
 
 }
