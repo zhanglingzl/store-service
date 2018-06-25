@@ -32,4 +32,9 @@ public class ProductServiceImpl implements ProductService{
         });
         return productList;
     }
+
+    @Override
+    public void saveOrUpdateProduct(Product product) {
+        repository.save(product);
+    }
 }

@@ -11,6 +11,12 @@ import java.util.List;
  */
 public interface ProductService {
 
+    /**
+     * 获取产品信息
+     * @param productForm
+     * @return
+     */
     List<Product> getProducts(ProductForm productForm);
 
+    void saveOrUpdateProduct(Product product);
 }
