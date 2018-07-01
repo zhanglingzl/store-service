@@ -7,7 +7,7 @@
 `keytool -genkey -alias tomcat -keyalg RSA -keystore /home/yousuf-zhang/keys/tomcat.keystore`
 
 ### ubuntu 端口转发
-```aidl
+```
 gedit /etc/sysctl.conf
 将net.ipv4.ip_forward=0更改为net.ipv4.ip_forward=1
 sysctl -p（这条命令是使数据转发功能生效）

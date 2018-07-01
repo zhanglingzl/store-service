@@ -29,6 +29,7 @@ public class AgencyDto {
     private String name;
     private String status;
     private List<AgencyDto> children = Lists.newArrayList();
+    private AgencyDto parent;
     private Answer answer;
 
 }

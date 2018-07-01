@@ -79,25 +79,28 @@ public class WechatAuthController {
      */
     @RequestMapping(value = "/code", method = RequestMethod.GET)
     public void getAuthCode(HttpServletResponse response,
-                            @RequestParam("redirect_uri") String redirectUri)
+                            //@RequestParam("redirect_uri") String redirectUri,
+                            String code)
             throws Exception{
-        response.sendRedirect(redirectUri+"/?code=123stit");
+        String redirectUri = "http://store.vicp.la:8888/callback/wechat-code";
+        System.out.println(code);
+        response.sendRedirect(redirectUri+"/?code="+code);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public RestResponse login(@RequestParam("code") String code) {
-        String wechatId = "abcde92340wer";
         Subject subject = SecurityUtils.getSubject();
         if(!subject.isAuthenticated()) {
-            Agency agency = wechatAuthService.findAgencyByWechatId(wechatId);
+            //Agency agency = wechatAuthService.findAgencyByCode(code);
+            Agency agency = wechatAuthService.findAgencyByWechatId("oArUD1huOrlocCNmH4UgheHEBIgc");
             if(agency == null) {
-                agency = new Agency();
-                agency.setWechatId(wechatId);
-                agency.setName("agency");
+                throw new RuntimeException("未找到agency");
             }
             JWTToken jwtToken = new JWTToken(JWTHelper.createToken(agency.getWechatId()));
             subject.login(jwtToken);
         }
         return RestResponse.success(subject.getPrincipal());
     }
+
+
 }

@@ -50,8 +50,8 @@ public class AgencyRealm extends AuthorizingRealm {
         if(StringUtils.isBlank(loginName)) {
             throw new AuthenticationException();
         }
-        //Agency agency = agencyService.findAgencyByWechatId(loginName);
-        Agency agency = new Agency();
+        Agency agency = agencyService.findAgencyByWechatId(loginName);
+        //Agency agency = new Agency();
         if(agency == null) {
             throw new AuthenticationException();
         }

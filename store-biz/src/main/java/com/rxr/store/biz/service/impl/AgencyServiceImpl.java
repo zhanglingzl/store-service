@@ -123,7 +123,7 @@ public class AgencyServiceImpl implements AgencyService{
 
     @Override
     public Agency findAgencyByWechatId(String wechatId) {
-        return null;
+        return agencyRepository.findByWechatId(wechatId);
     }
 
     @Override

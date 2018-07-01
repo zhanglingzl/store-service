@@ -55,7 +55,7 @@ public class Agency extends BaseEntity{
     @Column(name = "ag_status")
     private Integer status;
 
-    @OneToMany(mappedBy = "agency", fetch=FetchType.LAZY)
+    @OneToMany(mappedBy = "agency", fetch=FetchType.EAGER)
     private List<Answer> answers;
 
 }

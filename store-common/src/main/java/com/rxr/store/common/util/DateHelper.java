@@ -3,12 +3,15 @@ package com.rxr.store.common.util;
 import java.time.*;
 import java.util.Date;
 
+/**
+ * 时间辅助类
+ */
 public class DateHelper {
 
     /**
      *
      * @param localDateTime 计算时间
-     * @param addSecond 增加几分钟
+     * @param addSecond 增加秒数
      * @return 增加后的时间
      */
     public static Date plusSecond(LocalDateTime localDateTime, long addSecond) {
@@ -32,7 +35,7 @@ public class DateHelper {
     /**
      *
      * @param localDateTime 时间
-     * @param minutes 增加秒数
+     * @param minutes 增加分钟数
      * @return
      */
     public static Date plusMinutes(LocalDateTime localDateTime, long minutes) {
@@ -58,7 +61,7 @@ public class DateHelper {
      * @param date 时间
      * @return 转换 LocalDateTime
      */
-    public static LocalDateTime DateToLocalDateTime(Date date) {
+    public static LocalDateTime dateToLocalDateTime(Date date) {
         if(date == null) {
             date = new Date();
         }
@@ -71,8 +74,8 @@ public class DateHelper {
      *  当前时间转换为 LocalDateTime
      * @return
      */
-    public static LocalDateTime DateToLocalDateTime() {
-        return DateToLocalDateTime(null);
+    public static LocalDateTime dateToLocalDateTime() {
+        return dateToLocalDateTime(null);
     }
 
     /**
@@ -80,7 +83,7 @@ public class DateHelper {
      * @param localDateTime
      * @return
      */
-    public static Date LocalDateTimeToDate(LocalDateTime localDateTime) {
+    public static Date localDateTimeToDate(LocalDateTime localDateTime) {
         if(localDateTime == null) {
             localDateTime = LocalDateTime.now();
         }
@@ -93,8 +96,8 @@ public class DateHelper {
      * localDateTime 转换为Date
      * @return
      */
-    public static Date LocalDateTimeToDate() {
-        return LocalDateTimeToDate(null);
+    public static Date localDateTimeToDate() {
+        return localDateTimeToDate(null);
     }
 
     /**
@@ -103,7 +106,7 @@ public class DateHelper {
      * @return 判断该时间是否小于当前时间
      */
     public static boolean isBefore(Date date) {
-        return DateToLocalDateTime(date).isBefore(LocalDateTime.now(Clock.systemUTC()));
+        return dateToLocalDateTime(date).isBefore(LocalDateTime.now(Clock.systemUTC()));
     }
 
     public static void main(String[] args) {

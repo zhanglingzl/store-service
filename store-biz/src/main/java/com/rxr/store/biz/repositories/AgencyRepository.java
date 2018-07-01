@@ -5,14 +5,13 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import javax.transaction.Transactional;
-import java.util.Optional;
 
 /**
  * @author zero
  * @date Create in 2018/6/2 14:52
  */
 public interface AgencyRepository extends BaseRepository<Agency, Long>{
-    Optional<Agency> findByWechatId(String wechatId);
+    Agency findByWechatId(String wechatId);
 
     @Transactional
     @Modifying
