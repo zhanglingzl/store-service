@@ -1,6 +1,7 @@
 package com.rxr.store.common.util;
 
 import java.time.*;
+import java.time.temporal.IsoFields;
 import java.util.Date;
 
 /**
@@ -109,12 +110,14 @@ public class DateHelper {
         return dateToLocalDateTime(date).isBefore(LocalDateTime.now(Clock.systemUTC()));
     }
 
-    public static void main(String[] args) {
-       Date date = new Date();
-       System.out.println(date);
-       date = plusMinutes(-7200);
-       System.out.println(date);
-       System.out.println(isBefore(date));
+    public static String serialDateCode() {
+        LocalDate localDate = LocalDate.now();
+        String year = String.valueOf(localDate.getYear()).substring(2,4);
+        String week = String.valueOf(localDate.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR));
+        return year+week;
+    }
 
+    public static void main(String[] args) {
+        System.out.println(serialDateCode());
     }
 }

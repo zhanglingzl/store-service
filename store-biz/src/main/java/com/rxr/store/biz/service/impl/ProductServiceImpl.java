@@ -4,6 +4,7 @@ import com.rxr.store.biz.repositories.ProductRepository;
 import com.rxr.store.biz.service.ProductService;
 import com.rxr.store.common.entities.Product;
 import com.rxr.store.common.form.ProductForm;
+import com.rxr.store.common.util.StringHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,5 +42,11 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public void createQrCode(Integer box) {
 
+        String number = "0";
+        while(box> 0) {
+            number = StringHelper.numberAddOne(number);
+            box--;
+            System.out.println(number);
+        }
     }
 }

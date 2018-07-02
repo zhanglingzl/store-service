@@ -58,4 +58,7 @@ public class Agency extends BaseEntity{
     @OneToMany(mappedBy = "agency", fetch=FetchType.EAGER)
     private List<Answer> answers;
 
+    @OneToMany(mappedBy = "product_qr_code", fetch=FetchType.EAGER)
+    private List<ProductQrCode> productQrCodes;
+
 }

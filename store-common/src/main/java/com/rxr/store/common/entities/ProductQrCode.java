@@ -16,6 +16,11 @@ public class ProductQrCode extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
+
+    @ManyToOne
+    @JoinColumn(name = "agency_id")
+    private Agency agency;
+
     /**二维码类型 0:支,1:盒,2：箱*/
     @Column(name = "pqc_type")
     private Integer type;
@@ -27,6 +32,9 @@ public class ProductQrCode extends BaseEntity {
      */
     @Column(name = "pqc_serial_number")
     private String serialNo;
+    /**父ID*/
+    @Column(name = "pqc_parent_serial_number")
+    private String parentSerialNo;
     /**加密后的商品唯一标识码*/
     @Column(name = "pqc_sec_serial_number")
     private String securitySerialNo;
