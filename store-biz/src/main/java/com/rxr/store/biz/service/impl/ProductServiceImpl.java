@@ -37,4 +37,9 @@ public class ProductServiceImpl implements ProductService{
     public void saveOrUpdateProduct(Product product) {
         repository.save(product);
     }
+
+    @Override
+    public void createQrCode(Integer box) {
+
+    }
 }

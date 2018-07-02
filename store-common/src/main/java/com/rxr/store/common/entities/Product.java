@@ -54,4 +54,7 @@ public class Product extends BaseEntity{
                inverseJoinColumns = {@JoinColumn(name = "alp_id")})
     private List<AgencyLevelProduct> agencyLevelProducts;
 
+    @OneToMany(mappedBy = "qrCode", fetch=FetchType.EAGER)
+    private List<ProductQrCode> productQrCodes;
+
 }

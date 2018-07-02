@@ -31,4 +31,10 @@ public class ProductController {
         productService.saveOrUpdateProduct(product);
         return RestResponse.success();
     }
+
+    @PostMapping("/product/createQrCode")
+    public RestResponse createQrCode() {
+        productService.createQrCode(40);
+        return RestResponse.success();
+    }
 }

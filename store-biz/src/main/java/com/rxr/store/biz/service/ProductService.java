@@ -19,4 +19,10 @@ public interface ProductService {
     List<Product> getProducts(ProductForm productForm);
 
     void saveOrUpdateProduct(Product product);
+
+    /**
+     * 按照箱数新增库存
+     * @param box 箱
+     */
+    void createQrCode(Integer box);
 }
