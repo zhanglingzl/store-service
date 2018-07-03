@@ -3,7 +3,7 @@ package com.rxr.store.common.util;
 import java.text.DecimalFormat;
 
 public class StringHelper {
-    //流水号加1后返回，流水号长度为4
+    /**流水号加1后返回，流水号长度为6*/
     private static final String STR_FORMAT = "000000";
 
     public static String numberAddOne(String serialNo){

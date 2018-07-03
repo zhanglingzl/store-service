@@ -16,6 +16,8 @@ import java.util.List;
 @Table(name = "rxr_product")
 public class Product extends BaseEntity{
 
+    @Column(name = "product_no", nullable = false, unique = true)
+    private String productNo;
     /**
      * 商品名称
      */
@@ -54,7 +56,7 @@ public class Product extends BaseEntity{
                inverseJoinColumns = {@JoinColumn(name = "alp_id")})
     private List<AgencyLevelProduct> agencyLevelProducts;
 
-    @OneToMany(mappedBy = "product_qr_code", fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "product", fetch=FetchType.EAGER)
     private List<ProductQrCode> productQrCodes;
 
 }

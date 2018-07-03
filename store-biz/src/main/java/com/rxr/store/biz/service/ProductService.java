@@ -2,6 +2,7 @@ package com.rxr.store.biz.service;
 
 import com.rxr.store.common.entities.Product;
 import com.rxr.store.common.form.ProductForm;
+import com.rxr.store.common.form.ProductQrCodeForm;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public interface ProductService {
 
     /**
      * 按照箱数新增库存
-     * @param box 箱
+     * @param qrCodeForm 生成库存
      */
-    void createQrCode(Integer box);
+    void createProductQrCode(ProductQrCodeForm qrCodeForm);
 }

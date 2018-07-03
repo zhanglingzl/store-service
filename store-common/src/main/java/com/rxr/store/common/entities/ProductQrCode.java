@@ -30,16 +30,16 @@ public class ProductQrCode extends BaseEntity {
      * 比如1525-003-07-002321，即2015年25周生产，
      * 003代表读卡器（这个由企业自行定议），07（第7批次），第2321台
      */
-    @Column(name = "pqc_serial_number")
+    @Column(name = "pqc_serial_number", unique = true, nullable = false)
     private String serialNo;
     /**父ID*/
     @Column(name = "pqc_parent_serial_number")
     private String parentSerialNo;
-    /**加密后的商品唯一标识码*/
-    @Column(name = "pqc_sec_serial_number")
-    private String securitySerialNo;
     /**二维码保存路径*/
-    @Column(name = "pqc_url")
+    @Column(name = "pqc_url", unique = true, nullable = false)
     private String qrCodeUrl;
+    /**二维码内容*/
+    @Transient
+    private String qrContent;
 
 }

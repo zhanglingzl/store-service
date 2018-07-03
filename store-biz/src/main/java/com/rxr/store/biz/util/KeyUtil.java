@@ -4,6 +4,8 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 
 public class KeyUtil {
+    public static PrivateKey PRIVATE_KEY = null;
+    public static PublicKey PUBLIC_KEY = null;
     /**产品二维码RSA公钥(Base64编码)*/
     public final static String PRODUCT_QR_CODE_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ" +
             "8AMIIBCgKCAQEAl2w0FvFYReQM0zu3Eer2oTaPF3MnzjZY" +
@@ -38,11 +40,47 @@ public class KeyUtil {
             "0ZlO6iHM7jAbbdOM3MmEupx4cUhV41HGrUmvZsQfKHvBiO4oxvGw6LJRtlPsHQFPIt3GBnI5Hzw2" +
             "BOHBmmW0FcrSWicawSR0jtZJkek=";
     public static void main(String[] args) throws Exception {
-        PrivateKey privateKey = RSAUtil.string2PrivateKey(PRODUCT_QR_CODE_PRIVATE_KEY);
-        PublicKey publicKey = RSAUtil.string2PublicKey(PRODUCT_QR_CODE_PUBLIC_KEY);
-        String ss = RSAUtil.byte2Base64(RSAUtil.publicEncrypt("测试".getBytes(), publicKey));
+        String ss = encrypt("测试");
         System.out.println(ss);
-        ss =new String(RSAUtil.privateDecrypt(RSAUtil.base642Byte(ss), privateKey));
-        System.out.println(ss);
+        System.out.println(decrypt(ss));
+    }
+
+    /**
+     * 加密
+     * @param encrypt
+     * @return
+     */
+    public static String encrypt(String encrypt) {
+        String secEncrypt = "";
+        try {
+            if(PUBLIC_KEY == null)  {
+                PUBLIC_KEY = RSAUtil.string2PublicKey(PRODUCT_QR_CODE_PUBLIC_KEY);
+            }
+            secEncrypt = RSAUtil.byte2Base64(RSAUtil.publicEncrypt(encrypt.getBytes(), PUBLIC_KEY));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return secEncrypt;
+
+    }
+
+    /**
+     * 解密
+     * @param decrypt
+     * @return
+     */
+    public static String decrypt(String decrypt) {
+        String secDecrypt = "";
+        try {
+            if(PRIVATE_KEY == null)  {
+                PRIVATE_KEY = RSAUtil.string2PrivateKey(PRODUCT_QR_CODE_PRIVATE_KEY);
+
+            }
+            secDecrypt = new String(RSAUtil.privateDecrypt(RSAUtil.base642Byte(decrypt), PRIVATE_KEY));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return secDecrypt;
     }
 }

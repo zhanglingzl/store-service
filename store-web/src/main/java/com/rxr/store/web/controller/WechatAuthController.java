@@ -10,10 +10,7 @@ import com.rxr.store.wechat.service.WechatAuthService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -100,6 +97,11 @@ public class WechatAuthController {
             subject.login(jwtToken);
         }
         return RestResponse.success(subject.getPrincipal());
+    }
+
+    @GetMapping(value = "/product/qrcode")
+    public void productBySerialNo(@RequestParam("serialNo") String serialNo) {
+        System.out.println(serialNo);
     }
 
 
