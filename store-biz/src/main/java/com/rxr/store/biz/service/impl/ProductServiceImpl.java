@@ -59,8 +59,8 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public void createProductQrCode(ProductQrCodeForm qrCodeForm) {
         String number = qrCodeForm.getSerialNo();
-        String url = "http://www.runxier.com/product/qrcode?serialNo=";
-        String saveUrl = "F:/var/images/product/qrcode/"+ DateHelper.serialDateCode();
+        String url = "http://www.runxier.com/wechat/product/qrcode?serialNo=";
+        String saveUrl = "/var/www/images/product/qrcode/"+ DateHelper.serialDateCode();
         List<ProductQrCode> qrCodes = new ArrayList<>();
         Optional<Agency> agency = this.agencyRepository.findById(1000L);
         Product product = this.repository.findByProductNo(qrCodeForm.getProductNo());
@@ -115,11 +115,17 @@ public class ProductServiceImpl implements ProductService{
         QRCodeFactory factory = new QRCodeFactory();
         qrCodes.forEach(qrCode -> {
             try {
-                factory.CreatQrImage(qrCode.getQrContent(),qrCode.getSerialNo(),"jpg",qrCode.getQrCodeUrl(), "F:/var/images/rxr.jpg");
+                factory.CreatQrImage(qrCode.getQrContent(),qrCode.getSerialNo(),"jpg",qrCode.getQrCodeUrl(),null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
         });
+
+    }
+
+    @Override
+    public Product findProductByProductNo(String productNo) {
+        return this.repository.findByProductNo(productNo);
     }
 }

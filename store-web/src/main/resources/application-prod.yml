@@ -2,9 +2,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/agent?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    url: jdbc:mysql://47.106.86.98:3306/store?useUnicode=true&characterEncoding=UTF-8&useSSL=false
     username: root
-    password: 123456
+    password: root
     druid:
       max-active: 30
       min-idle: 5

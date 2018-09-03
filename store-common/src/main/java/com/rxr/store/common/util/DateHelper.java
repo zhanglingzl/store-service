@@ -20,7 +20,7 @@ public class DateHelper {
             localDateTime = LocalDateTime.now();
         }
         ZoneId zone = ZoneId.systemDefault();
-        Instant instant = localDateTime.plusMinutes(addSecond).atZone(zone).toInstant();
+        Instant instant = localDateTime.plusSeconds(addSecond).atZone(zone).toInstant();
         return Date.from(instant);
     }
 
@@ -49,7 +49,7 @@ public class DateHelper {
     }
 
     /**
-     *
+     *增加分钟数
      * @param minutes zen
      * @return
      */
@@ -118,6 +118,8 @@ public class DateHelper {
     }
 
     public static void main(String[] args) {
+
         System.out.println(serialDateCode());
+        System.out.println(plusSecond(2592000));
     }
 }

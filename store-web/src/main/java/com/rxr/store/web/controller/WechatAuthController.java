@@ -7,21 +7,28 @@ import com.rxr.store.web.common.dto.RestResponse;
 import com.rxr.store.wechat.model.WechatAuth;
 import com.rxr.store.wechat.model.menu.Menu;
 import com.rxr.store.wechat.service.WechatAuthService;
+import lombok.extern.java.Log;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 无需登录验证的
  */
+@Log
 @RestController
 @RequestMapping("/wechat/auth")
 public class WechatAuthController {
@@ -48,20 +55,54 @@ public class WechatAuthController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     public void auth(HttpServletRequest request) {
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(request.getInputStream()));
-            StringBuilder stb = new StringBuilder();
-            String xmlHead = "";
-            String xmlContent = "";
-            String line = null;
-            while ((line = in.readLine()) != null) {
-                stb.append(line);
+
+            SAXReader reader = new SAXReader();
+            Document document = reader.read(request.getInputStream());
+            Element root = document.getRootElement();
+            Map<String, String> result = new HashMap<>();
+            StringBuilder logs = new StringBuilder("微信推送事件:");
+            this.parseElement(root.elements(), result, logs);
+            log.info(logs.toString());
+            String wechatId = result.get("FromUserName");
+            Agency agency = this.wechatAuthService.findAgencyByWechatId(wechatId);
+            if(agency == null) {
+                agency = new Agency();
+                agency.setWechatId(wechatId);
+                switch (result.get("Event")) {
+                    case "subscribe":
+                        if(StringUtils.isBlank(result.get("EventKey"))) {
+                            agency.setParentId(10000L);
+                        } else {
+                            agency.setParentId(Long.valueOf(result.get("EventKey").split("_")[1]));
+                        }
+                        agency.setType(0);
+                        this.wechatAuthService.saveAgency(agency);
+                        break;
+                    case "SCAN":
+                        agency.setParentId(Long.valueOf(result.get("EventKey")));
+                        agency.setType(0);
+                        this.wechatAuthService.saveAgency(agency);
+                        break;
+                }
+
             }
-            System.out.println(stb.toString());
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+    }
+
+    private void parseElement(List<Element> dataEle, Map<String, String> dataMap, StringBuilder logs) {
+        dataEle.forEach(element -> {
+            if(element.hasContent()) {
+                parseElement(element.elements(),dataMap, logs);
+            }
+            logs.append(element.getName()).append("->")
+                    .append(element.getTextTrim())
+                    .append(",");
+            dataMap.put(element.getName(), element.getTextTrim());
+        });
     }
 
     @RequestMapping(value = "/createMenu", method = RequestMethod.GET)
@@ -71,7 +112,7 @@ public class WechatAuthController {
     }
 
     /**
-     * 微信获取授权Code
+     * 微信获取授权Code,测试使用
      *
      */
     @RequestMapping(value = "/code", method = RequestMethod.GET)
@@ -79,8 +120,8 @@ public class WechatAuthController {
                             //@RequestParam("redirect_uri") String redirectUri,
                             String code)
             throws Exception{
-        String redirectUri = "http://store.vicp.la:8888/callback/wechat-code";
-        System.out.println(code);
+        String redirectUri = "http://wechat.greenleague.xin/callback/wechat-code";
+        //System.out.println(code);
         response.sendRedirect(redirectUri+"/?code="+code);
     }
 

@@ -26,4 +26,11 @@ public interface ProductService {
      * @param qrCodeForm 生成库存
      */
     void createProductQrCode(ProductQrCodeForm qrCodeForm);
+
+    /***
+     * 根据商品编号查询商品
+     * @param productNo
+     * @return
+     */
+    Product findProductByProductNo(String productNo);
 }

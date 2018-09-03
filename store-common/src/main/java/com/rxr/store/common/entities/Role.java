@@ -1,17 +1,16 @@
 package com.rxr.store.common.entities;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.util.List;
 
+
 @Entity
-@Getter
-@Setter
-@ToString
+@Data
 @Table(name = "sys_role")
+@EqualsAndHashCode(callSuper = true)
 public class Role extends BaseEntity {
     @Column(name = "role_name")
     private String role;

@@ -19,7 +19,7 @@ public class WechatController {
 
     @RequestMapping(value = "/parent-agency", method = RequestMethod.GET)
     public RestResponse parentAgency(@RequestParam("parentId") Long parentId) {
-        Agency agency = wechatAuthService.findParentAgencyById(parentId);
+        Agency agency = wechatAuthService.findAgencyById(parentId);
         return RestResponse.success(agency);
     }
 
@@ -28,6 +28,7 @@ public class WechatController {
         String ticket = wechatAuthService.findQrCodeTicket(id);
         return RestResponse.success(ticket);
     }
+
 
 
 }

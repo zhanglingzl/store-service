@@ -27,7 +27,7 @@ public class JWTHelper {
             JWTCreator.Builder builder = JWT.create()
                     .withClaim("loginName", loginName)
                     .withIssuer(ISSUER)
-                    .withExpiresAt(DateHelper.plusSecond(EXPIRE_TIME));
+                    .withExpiresAt(DateHelper.plusMinutes(EXPIRE_TIME));
             return builder.sign(algorithm);
         } catch (IllegalArgumentException | UnsupportedEncodingException e) {
             throw new RuntimeException(e);

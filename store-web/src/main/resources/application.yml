@@ -1,7 +1,7 @@
 #数据库配置
 spring:
   profiles:
-    active: dev
+    active: prod
   aop:
     auto: true
     proxy-target-class: true

@@ -35,8 +35,11 @@ public class MatrixToImageWriter {
         System.out.println("write to file");
         BufferedImage image = toBufferedImage(matrix);
         //设置logo图标
-        QRCodeFactory logoConfig = new QRCodeFactory();
-        image = logoConfig.setMatrixLogo(image, logUri);
+        if(logUri != null) {
+            QRCodeFactory logoConfig = new QRCodeFactory();
+            image = logoConfig.setMatrixLogo(image, logUri);
+        }
+
 
         if (!ImageIO.write(image, format, file)) {
             System.out.println("生成图片失败");

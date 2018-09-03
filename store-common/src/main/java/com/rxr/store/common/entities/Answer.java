@@ -1,7 +1,7 @@
 package com.rxr.store.common.entities;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 
@@ -9,10 +9,11 @@ import javax.persistence.*;
  * @author zero
  * @date Create in 2018-06-09 12:49
  */
-@Setter
-@Getter
+
+@Data
 @Entity
 @Table(name = "rxr_answer")
+@EqualsAndHashCode(callSuper = true)
 public class Answer extends BaseEntity {
 
     /**

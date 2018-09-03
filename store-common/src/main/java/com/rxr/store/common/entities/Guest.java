@@ -1,16 +1,17 @@
 package com.rxr.store.common.entities;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+
+@Data
 @Entity
-@Getter
-@Setter
 @Table(name = "rxr_guest")
+@EqualsAndHashCode(callSuper = true)
 public class Guest extends BaseEntity{
 
     @Column(name = "gu_name")

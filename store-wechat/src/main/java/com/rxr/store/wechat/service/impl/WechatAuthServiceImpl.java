@@ -14,6 +14,7 @@ import com.rxr.store.wechat.util.AuthUtil;
 import com.rxr.store.wechat.util.JsonUtil;
 import com.rxr.store.wechat.util.SHA1;
 import lombok.extern.java.Log;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -59,17 +60,17 @@ public class WechatAuthServiceImpl implements WechatAuthService {
         Button btn = new Button();
         btn.setName("服务中心");
         Button[] subButon = new Button[] {
-            new Button(Button.Type.view,"资质认证","http://store.vicp.la:8888/wechat/certification"),
-            new Button(Button.Type.view,"公司简介","http://store.vicp.la:8888/wechat/company-profile"),
-            new Button(Button.Type.view,"培训资料","http://store.vicp.la:8888/wechat/train"),
-            new Button(Button.Type.view,"成为代理","http://store.vicp.la:8888/wechat/agency"),
-            new Button(Button.Type.view,"个人中心","http://store.vicp.la:8888/wechat/personal-center")
+            new Button(Button.Type.view,"资质认证","http://wechat.greenleague.xin/wechat/certification"),
+            new Button(Button.Type.view,"公司简介","http://wechat.greenleague.xin/wechat/company-profile"),
+            new Button(Button.Type.view,"培训资料","http://wechat.greenleague.xin/wechat/train"),
+            new Button(Button.Type.view,"成为代理","http://wechat.greenleague.xin/wechat/agency"),
+            new Button(Button.Type.view,"个人中心","http://wechat.greenleague.xin/wechat/personal-center")
 
         };
         btn.setSubButton(subButon);
         Button[] buttons = new Button[] {
-            new Button(Button.Type.view,"进入商城","http://store.vicp.la:8888/wechat/home"),
-            new Button(Button.Type.view, "我的二维码", "http://store.vicp.la:8888/wechat/qr-code"),
+            new Button(Button.Type.view,"进入商城","http://wechat.greenleague.xin/wechat/home"),
+            new Button(Button.Type.view, "我的二维码", "http://wechat.greenleague.xin/wechat/qr-code"),
                 btn
         };
         menu.setButton(buttons);
@@ -109,9 +110,8 @@ public class WechatAuthServiceImpl implements WechatAuthService {
             String accessToken = node.get("access_token").asText();
             String openId = node.get("openid").asText();
             agency = this.findAgencyByWechatId(openId);
-            if(agency == null) {
-                agency = this.findAgencyByWechat(accessToken,openId);
-                agency = this.repository.save(agency);
+            if(agency != null && StringUtils.isBlank(agency.getAvatar())) {
+                this.findAgencyByWechat(accessToken,agency);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -120,29 +120,40 @@ public class WechatAuthServiceImpl implements WechatAuthService {
     }
 
     @Override
-    public Agency findParentAgencyById(Long parentId) {
-        return repository.findAgencyById(parentId);
+    public void saveAgency(Agency agency) {
+        this.repository.save(agency);
+    }
+
+    @Override
+    public Agency findAgencyById(Long id) {
+        return repository.findAgencyById(id);
     }
 
     @Override
     public String findQrCodeTicket(Long id) {
         try {
-            initAccessToken();
-            String url = AuthUtil.QR_CODE_TICKET_URL.replace("TOKEN", token.getAccessToken());
-            HttpHeaders headers = new HttpHeaders();
-            MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
-            headers.setContentType(type);
-            String requestJson = "{\"expire_seconds\": 604800, \"action_name\":" +
-                    " \"QR_SCENE\", \"action_info\": {\"scene\": {\"scene_id\": " +
-                    id +
-                    "}}}";
-            HttpEntity<String> entity = new HttpEntity<>(requestJson,headers);
-            String result = restTemplate.postForObject(url, entity, String.class);
-            JsonNode node = JsonUtil.json2pojo(result, JsonNode.class);
-            String ticket = node.get("ticket").asText();
-            String pageUrl = "/var/www/images/agency/"+id+".jpg";
-            this.getQrCode(ticket,pageUrl);
-            return "images/"+id+".jpg";
+            Agency agency = this.findAgencyById(id);
+            if(StringUtils.isBlank(agency.getTicket())
+                    || agency.getTicketExpire() == null
+                    || DateHelper.isBefore(agency.getTicketExpire())) {
+                initAccessToken();
+                String url = AuthUtil.QR_CODE_TICKET_URL.replace("TOKEN", token.getAccessToken());
+                HttpHeaders headers = new HttpHeaders();
+                MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+                headers.setContentType(type);
+                String requestJson = "{\"expire_seconds\": 2592000, \"action_name\":" +
+                        " \"QR_SCENE\", \"action_info\": {\"scene\": {\"scene_id\": " +
+                        id +
+                        "}}}";
+                HttpEntity<String> entity = new HttpEntity<>(requestJson,headers);
+                String result = restTemplate.postForObject(url, entity, String.class);
+                JsonNode node = JsonUtil.json2pojo(result, JsonNode.class);
+                String ticket = node.get("ticket").asText();
+                agency.setTicket(ticket);
+                agency.setTicketExpire(DateHelper.plusSecond(node.get("expire_seconds").asInt()));
+                this.repository.save(agency);
+            }
+            return agency.getTicket();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -150,19 +161,15 @@ public class WechatAuthServiceImpl implements WechatAuthService {
         return null;
     }
 
-    private Agency findAgencyByWechat(String accessToken, String openId) throws Exception {
+    private void findAgencyByWechat(String accessToken, Agency agency) throws Exception {
         String url = AuthUtil.AUTH_USER_INFO_URL.replace("ACCESS_TOKEN", accessToken)
-                .replace("OPENID", openId);
+                .replace("OPENID", agency.getWechatId());
         restTemplate.getMessageConverters().set(1, new StringHttpMessageConverter(StandardCharsets.UTF_8));
         ResponseEntity<String> result = restTemplate.getForEntity(url, String.class);
-        Agency agency = null;
         JsonNode node = JsonUtil.json2pojo(result.getBody(), JsonNode.class);
-        agency =  new Agency();
-        agency.setWechatId(openId);
         agency.setAvatar(node.get("headimgurl").asText());
         agency.setGender(node.get("sex").asText());
         agency.setName(node.get("nickname").asText());
-        return agency;
     }
 
     private void getQrCode(String ticket,String pageUrl) throws Exception{

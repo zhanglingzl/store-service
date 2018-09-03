@@ -2,18 +2,17 @@ package com.rxr.store.common.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.util.List;
 
+
 @Entity
-@Getter
-@Setter
-@ToString
+@Data
 @Table(name = "rxr_user")
+@EqualsAndHashCode(callSuper = true)
 @JsonIgnoreProperties({"password", "salt"})
 public class User extends BaseEntity{
     @Column(name = "user_login_name", unique = true)

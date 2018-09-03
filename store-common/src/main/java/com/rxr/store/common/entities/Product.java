@@ -1,7 +1,7 @@
 package com.rxr.store.common.entities;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.util.List;
@@ -10,10 +10,11 @@ import java.util.List;
  * @author zero
  * @date Create in 2018-06-10 13:15
  */
-@Getter
-@Setter
+
+@Data
 @Entity
 @Table(name = "rxr_product")
+@EqualsAndHashCode(callSuper = true)
 public class Product extends BaseEntity{
 
     @Column(name = "product_no", nullable = false, unique = true)
@@ -43,13 +44,20 @@ public class Product extends BaseEntity{
      */
     @Column(name = "product_quality_report")
     private String qualityReport;
-
     /**
-     * 商品规格，0：件 1：个 2：箱
+     * 产品封面
      */
-    @Column(name = "product_specification")
-    private Integer specification;
-
+    @Column(name = "product_cover")
+    private String cover;
+    /**零售价*/
+    @Column(name="product_amount")
+    private Double amount;
+    /**会员价*/
+    @Column(name="product_vip_amount")
+    private Double vipAmount;
+    // 产品图片
+    @Column(name="product_images")
+    private String images;
     @ManyToMany
     @JoinTable(name = "agency_level_product",
                joinColumns = {@JoinColumn(name = "product_id")},

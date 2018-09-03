@@ -1,17 +1,18 @@
 package com.rxr.store.common.entities;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 
 /**
  * 商品二维码表
  */
+
 @Entity
-@Getter
-@Setter
+@Data
 @Table(name = "rxr_product_qr_code")
+@EqualsAndHashCode(callSuper = true)
 public class ProductQrCode extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "product_id")

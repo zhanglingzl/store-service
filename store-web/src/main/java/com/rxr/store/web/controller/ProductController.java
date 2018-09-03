@@ -7,6 +7,7 @@ import com.rxr.store.common.form.ProductQrCodeForm;
 import com.rxr.store.web.common.dto.RestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,4 +39,11 @@ public class ProductController {
         productService.createProductQrCode(qrCodeForm);
         return RestResponse.success();
     }
+
+    @GetMapping("/product/{productNo}")
+    public RestResponse<Product> findProductByProductNo(@PathVariable("productNo") String productNo) {
+        Product product = this.productService.findProductByProductNo(productNo);
+        return RestResponse.success(product);
+    }
+
 }

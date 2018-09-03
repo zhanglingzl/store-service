@@ -1,7 +1,7 @@
 package com.rxr.store.common.entities;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.util.List;
@@ -10,10 +10,11 @@ import java.util.List;
  * @author zero
  * @date Create in 2018-06-12 21:10
  */
-@Getter
-@Setter
+
+@Data
 @Entity
 @Table(name = "rxr_agency_level_product")
+@EqualsAndHashCode(callSuper = true)
 public class AgencyLevelProduct extends BaseEntity{
 
     /**

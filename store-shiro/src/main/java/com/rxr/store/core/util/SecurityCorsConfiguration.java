@@ -22,7 +22,7 @@ public class SecurityCorsConfiguration {
         List<String> urls = new ArrayList<>();
         urls.add("http://localhost:4200");
         urls.add("http://localhost:4100");
-        urls.add("http://store.vicp.la:8888");
+        urls.add("http://wechat.greenleague.xin");
         config.setAllowedOrigins(urls);
         config.addAllowedHeader(CorsConfiguration.ALL);
         config.addAllowedMethod(CorsConfiguration.ALL);
