@@ -1,6 +1,6 @@
 package com.rxr.store.biz.service;
 
-import com.rxr.store.common.entities.Product;
+import com.rxr.store.common.entity.Product;
 import com.rxr.store.common.form.ProductForm;
 import com.rxr.store.common.form.ProductQrCodeForm;
 

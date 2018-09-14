@@ -10,6 +10,8 @@ import lombok.Data;
 public class AgencyForm {
 
     private Long id;
+    /**代理类型 1: 一级代理, 2: 二级代理, 3: 三级代理*/
+    private Integer type;
     private String name;
     private String wechat;
     private String telephone;

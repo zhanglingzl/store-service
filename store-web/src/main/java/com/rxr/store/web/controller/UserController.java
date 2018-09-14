@@ -1,7 +1,7 @@
 package com.rxr.store.web.controller;
 
 import com.rxr.store.biz.service.UserService;
-import com.rxr.store.common.entities.User;
+import com.rxr.store.common.entity.User;
 import com.rxr.store.common.form.UserForm;
 import com.rxr.store.web.common.dto.PageData;
 import com.rxr.store.web.common.dto.PageParams;
@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 public class UserController {

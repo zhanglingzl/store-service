@@ -1,16 +1,13 @@
 package com.rxr.store.common.dto;
 
 import com.google.common.collect.Lists;
-import com.rxr.store.common.entities.Answer;
+import com.rxr.store.common.entity.Answer;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
-/**
- * @author zero
- * @date Create in 2018/6/2 14:38
- */
+
 @Setter
 @Getter
 public class AgencyDto {

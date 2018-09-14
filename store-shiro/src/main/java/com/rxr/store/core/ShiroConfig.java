@@ -41,6 +41,7 @@ public class ShiroConfig {
         DefaultShiroFilterChainDefinition chainDefinition = new DefaultShiroFilterChainDefinition();
         chainDefinition.addPathDefinition("/login", "anon");
         chainDefinition.addPathDefinition("/wechat/auth/**", "anon");
+        chainDefinition.addPathDefinition("/wechat/notify_url", "anon");
         chainDefinition.addPathDefinition("/logout", "logout");
         chainDefinition.addPathDefinition("/**", "jwt");
 

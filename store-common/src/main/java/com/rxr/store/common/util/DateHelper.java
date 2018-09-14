@@ -1,6 +1,7 @@
 package com.rxr.store.common.util;
 
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.IsoFields;
 import java.util.Date;
 
@@ -117,9 +118,27 @@ public class DateHelper {
         return year+week;
     }
 
-    public static void main(String[] args) {
-
-        System.out.println(serialDateCode());
-        System.out.println(plusSecond(2592000));
+    /**
+     * localDateTime转换为格式化时间
+     * @param localDateTime localDateTime
+     * @param pattern 格式
+     * @return
+     */
+    public static String format(LocalDateTime localDateTime, String pattern){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+        return localDateTime.format(formatter);
     }
+
+    public static Date format(String date, String format) {
+        DateTimeFormatter df = DateTimeFormatter.ofPattern(format);
+        LocalDateTime.parse(date, df);
+        return localDateTimeToDate(LocalDateTime.parse(date, df));
+    }
+
+    public static void main(String[] args) {
+        format(LocalDateTime.now(),"yyyyMMddHHmmss");
+        System.out.println(System.currentTimeMillis());
+    }
+
+
 }

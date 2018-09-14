@@ -4,4 +4,3 @@ include 'store-biz'
 include 'store-web'
 include 'store-shiro'
 include 'store-wechat'
-

@@ -1,8 +1,10 @@
 package com.rxr.store.biz.service;
 
-import com.rxr.store.common.entities.Agency;
+import com.rxr.store.common.entity.Agency;
 import com.rxr.store.common.dto.AgencyDto;
 import com.rxr.store.common.form.AgencyForm;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -38,4 +40,7 @@ public interface AgencyService {
      */
     void verifyUpdate(Long id);
 
+    int[] findAgencyByCount(Agency agency);
+
+    Page<Agency> listAgencies(AgencyForm type, Pageable pageable);
 }

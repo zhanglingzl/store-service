@@ -1,4 +1,4 @@
-package com.rxr.store.common.entities;
+package com.rxr.store.common.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
@@ -23,6 +23,7 @@ public class Address extends BaseEntity {
     private String city;
     /**区*/
     private String country;
+    private String cityCode;
     /**详细地址*/
     private String address;
     /**是否是默认地址 0:否,1:是*/

@@ -1,6 +1,6 @@
 package com.rxr.store.biz.service;
 
-import com.rxr.store.common.entities.User;
+import com.rxr.store.common.entity.User;
 import com.rxr.store.common.form.UserForm;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

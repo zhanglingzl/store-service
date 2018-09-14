@@ -26,7 +26,7 @@ spring:
 
 #mybatis配置
 #mybatis:
-#  type-aliases-package: com.rxr.store.common.entities
+#  type-aliases-package: com.rxr.store.common.entity
 #  configuration:
 #    cache-enabled: false
 #    map-underscore-to-camel-case: true

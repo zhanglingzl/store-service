@@ -1,7 +1,7 @@
 package com.rxr.store.core;
 
 import com.rxr.store.biz.service.UserService;
-import com.rxr.store.common.entities.User;
+import com.rxr.store.common.entity.User;
 import com.rxr.store.core.util.JWTHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authc.AuthenticationException;

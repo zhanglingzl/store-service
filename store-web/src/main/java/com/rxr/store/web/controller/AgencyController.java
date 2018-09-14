@@ -2,12 +2,18 @@ package com.rxr.store.web.controller;
 
 import com.rxr.store.biz.service.AgencyService;
 import com.rxr.store.common.dto.AgencyDto;
+import com.rxr.store.common.dto.PageParams;
+import com.rxr.store.common.entity.Agency;
 import com.rxr.store.common.enums.AgencyEnum;
 import com.rxr.store.common.form.AgencyForm;
+import com.rxr.store.web.common.dto.PageData;
 import com.rxr.store.web.common.dto.RestResponse;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -47,6 +53,21 @@ public class AgencyController {
     public RestResponse verifyUpdate(Long id){
         agencyService.verifyUpdate(id);
         return RestResponse.success();
+    }
+
+    @GetMapping("/agency/count")
+    public RestResponse<int[]> findAgencyCount() {
+        Agency agency = (Agency) SecurityUtils.getSubject().getPrincipal();
+        return RestResponse.success(this.agencyService.findAgencyByCount(agency));
+    }
+
+    @GetMapping("agency/list")
+    public RestResponse<PageData<Agency>> listAgencies(AgencyForm agencyForm, PageParams pageParams) {
+        Agency agency = (Agency) SecurityUtils.getSubject().getPrincipal();
+        agencyForm.setId(agency.getId());
+        agencyForm.setType(agencyForm.getType());
+        Page<Agency> page = agencyService.listAgencies(agencyForm, pageParams.pageable());
+        return RestResponse.success(PageData.bulid(page));
     }
 
 }

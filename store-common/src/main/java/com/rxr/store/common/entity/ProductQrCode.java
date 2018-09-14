@@ -1,4 +1,4 @@
-package com.rxr.store.common.entities;
+package com.rxr.store.common.entity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

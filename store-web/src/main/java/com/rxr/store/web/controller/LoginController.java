@@ -1,7 +1,7 @@
 package com.rxr.store.web.controller;
 
 import com.rxr.store.biz.service.UserService;
-import com.rxr.store.common.entities.User;
+import com.rxr.store.common.entity.User;
 import com.rxr.store.core.JWTToken;
 import com.rxr.store.core.util.JWTHelper;
 import com.rxr.store.core.util.PasswordHelper;

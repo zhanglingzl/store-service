@@ -1,4 +1,4 @@
-package com.rxr.store.common.entities;
+package com.rxr.store.common.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

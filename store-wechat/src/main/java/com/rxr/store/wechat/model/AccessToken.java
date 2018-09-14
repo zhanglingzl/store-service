@@ -12,4 +12,5 @@ public class AccessToken extends Message{
     @JsonProperty("expires_in")
     private Long expiresIn;
     private Date expiresDate;
+    private String ticket;
 }

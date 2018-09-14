@@ -1,9 +1,10 @@
-package com.rxr.store.common.entities;
+package com.rxr.store.common.entity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -51,10 +52,10 @@ public class Product extends BaseEntity{
     private String cover;
     /**零售价*/
     @Column(name="product_amount")
-    private Double amount;
+    private BigDecimal amount;
     /**会员价*/
     @Column(name="product_vip_amount")
-    private Double vipAmount;
+    private BigDecimal vipAmount;
     // 产品图片
     @Column(name="product_images")
     private String images;

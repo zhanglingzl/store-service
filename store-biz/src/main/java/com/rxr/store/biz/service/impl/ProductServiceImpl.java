@@ -6,15 +6,16 @@ import com.rxr.store.biz.repositories.ProductRepository;
 import com.rxr.store.biz.service.ProductService;
 import com.rxr.store.biz.util.KeyUtil;
 import com.rxr.store.biz.util.QRCodeFactory;
-import com.rxr.store.common.entities.Agency;
-import com.rxr.store.common.entities.Product;
-import com.rxr.store.common.entities.ProductQrCode;
+import com.rxr.store.common.entity.Agency;
+import com.rxr.store.common.entity.Product;
+import com.rxr.store.common.entity.ProductQrCode;
 import com.rxr.store.common.form.ProductForm;
 import com.rxr.store.common.form.ProductQrCodeForm;
 import com.rxr.store.common.util.DateHelper;
 import com.rxr.store.common.util.StringHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
@@ -29,6 +30,8 @@ import java.util.Optional;
  */
 @Service
 public class ProductServiceImpl implements ProductService{
+    @Value("store.wechatUrl")
+    private static String wechatUrl;
 
     @Autowired
     private ProductRepository repository;

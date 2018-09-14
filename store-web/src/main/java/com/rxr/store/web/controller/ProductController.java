@@ -1,7 +1,7 @@
 package com.rxr.store.web.controller;
 
 import com.rxr.store.biz.service.ProductService;
-import com.rxr.store.common.entities.Product;
+import com.rxr.store.common.entity.Product;
 import com.rxr.store.common.form.ProductForm;
 import com.rxr.store.common.form.ProductQrCodeForm;
 import com.rxr.store.web.common.dto.RestResponse;

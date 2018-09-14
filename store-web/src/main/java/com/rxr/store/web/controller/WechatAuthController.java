@@ -1,6 +1,7 @@
 package com.rxr.store.web.controller;
 
-import com.rxr.store.common.entities.Agency;
+import com.rxr.store.common.entity.Agency;
+import com.rxr.store.common.util.XmlUtils;
 import com.rxr.store.core.JWTToken;
 import com.rxr.store.core.util.JWTHelper;
 import com.rxr.store.web.common.dto.RestResponse;
@@ -8,12 +9,14 @@ import com.rxr.store.wechat.model.WechatAuth;
 import com.rxr.store.wechat.model.menu.Menu;
 import com.rxr.store.wechat.service.WechatAuthService;
 import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +31,7 @@ import java.util.Map;
 /**
  * 无需登录验证的
  */
-@Log
+@Slf4j
 @RestController
 @RequestMapping("/wechat/auth")
 public class WechatAuthController {
@@ -60,9 +63,8 @@ public class WechatAuthController {
             Document document = reader.read(request.getInputStream());
             Element root = document.getRootElement();
             Map<String, String> result = new HashMap<>();
-            StringBuilder logs = new StringBuilder("微信推送事件:");
-            this.parseElement(root.elements(), result, logs);
-            log.info(logs.toString());
+            log.info("微信推送事件:"+document.asXML());
+            XmlUtils.parseElement(root.elements(), result);
             String wechatId = result.get("FromUserName");
             Agency agency = this.wechatAuthService.findAgencyByWechatId(wechatId);
             if(agency == null) {
@@ -84,25 +86,11 @@ public class WechatAuthController {
                         this.wechatAuthService.saveAgency(agency);
                         break;
                 }
-
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-    }
-
-    private void parseElement(List<Element> dataEle, Map<String, String> dataMap, StringBuilder logs) {
-        dataEle.forEach(element -> {
-            if(element.hasContent()) {
-                parseElement(element.elements(),dataMap, logs);
-            }
-            logs.append(element.getName()).append("->")
-                    .append(element.getTextTrim())
-                    .append(",");
-            dataMap.put(element.getName(), element.getTextTrim());
-        });
     }
 
     @RequestMapping(value = "/createMenu", method = RequestMethod.GET)

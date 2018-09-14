@@ -2,7 +2,7 @@ package com.rxr.store.biz.service.impl;
 
 import com.rxr.store.biz.repositories.UserRepository;
 import com.rxr.store.biz.service.UserService;
-import com.rxr.store.common.entities.User;
+import com.rxr.store.common.entity.User;
 import com.rxr.store.common.form.UserForm;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.persistence.criteria.Predicate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,6 +56,7 @@ public class UserServiceImpl implements UserService {
                 predicate.getExpressions()
                         .add(criteriaBuilder.equal(root.get("state"),user.getState()));
             }
+
             return predicate;
         }, pageable);
     }

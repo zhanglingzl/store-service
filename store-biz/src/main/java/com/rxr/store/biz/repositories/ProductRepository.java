@@ -1,6 +1,6 @@
 package com.rxr.store.biz.repositories;
 
-import com.rxr.store.common.entities.Product;
+import com.rxr.store.common.entity.Product;
 
 /**
  * @author zero

@@ -1,6 +1,6 @@
 package com.rxr.store.core.util;
 
-import com.rxr.store.common.entities.User;
+import com.rxr.store.common.entity.User;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.SimpleHash;

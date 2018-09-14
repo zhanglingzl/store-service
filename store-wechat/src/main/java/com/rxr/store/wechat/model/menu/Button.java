@@ -3,6 +3,7 @@ package com.rxr.store.wechat.model.menu;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.rxr.store.wechat.util.JsonUtil;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -13,7 +14,6 @@ import java.util.List;
 @Data
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@NoArgsConstructor
 public class Button {
     private Type type;
     private String name;
@@ -21,6 +21,8 @@ public class Button {
     private String url;
     @JsonProperty("sub_button")
     private Button[] subButton;
+
+    public Button() {}
 
     public Button(Type type, String name, String url) {
         this.type = type;
