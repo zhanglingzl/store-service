@@ -131,4 +131,9 @@ public class ProductServiceImpl implements ProductService{
     public Product findProductByProductNo(String productNo) {
         return this.repository.findByProductNo(productNo);
     }
+
+    @Override
+    public void deleteProductById(Long id) {
+        this.repository.deleteById(id);
+    }
 }

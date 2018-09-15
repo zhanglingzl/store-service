@@ -33,4 +33,10 @@ public interface ProductService {
      * @return
      */
     Product findProductByProductNo(String productNo);
+
+    /**
+     * 根据商品ID删除商品
+     * @param id 商品ID
+     */
+    void deleteProductById(Long id);
 }

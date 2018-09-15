@@ -6,10 +6,7 @@ import com.rxr.store.common.form.ProductForm;
 import com.rxr.store.common.form.ProductQrCodeForm;
 import com.rxr.store.web.common.dto.RestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,7 +26,7 @@ public class ProductController {
     }
 
     @PostMapping("/product/saveOrUpdate")
-    public RestResponse saveProduct(Product product){
+    public RestResponse saveProduct(@RequestBody Product product){
         productService.saveOrUpdateProduct(product);
         return RestResponse.success();
     }
@@ -44,6 +41,12 @@ public class ProductController {
     public RestResponse<Product> findProductByProductNo(@PathVariable("productNo") String productNo) {
         Product product = this.productService.findProductByProductNo(productNo);
         return RestResponse.success(product);
+    }
+
+    @DeleteMapping("/product/delete")
+    public RestResponse deleteProductById(Long id){
+        productService.deleteProductById(id);
+        return RestResponse.success();
     }
 
 }

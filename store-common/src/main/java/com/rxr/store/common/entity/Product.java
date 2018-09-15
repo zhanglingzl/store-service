@@ -25,6 +25,12 @@ public class Product extends BaseEntity{
      */
     @Column(name = "product_name")
     private String productName;
+
+    /**
+     * 商品价格
+     */
+    @Column(name = "product_price")
+    private String productPrice;
     /**
      * 商品作用
      */
@@ -56,7 +62,10 @@ public class Product extends BaseEntity{
     /**会员价*/
     @Column(name="product_vip_amount")
     private BigDecimal vipAmount;
-    // 产品图片
+
+    /**
+     * 产品图片
+     */
     @Column(name="product_images")
     private String images;
     @ManyToMany
