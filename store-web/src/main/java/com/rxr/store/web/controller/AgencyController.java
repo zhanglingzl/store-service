@@ -11,10 +11,7 @@ import com.rxr.store.web.common.dto.RestResponse;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -58,16 +55,26 @@ public class AgencyController {
     @GetMapping("/agency/count")
     public RestResponse<int[]> findAgencyCount() {
         Agency agency = (Agency) SecurityUtils.getSubject().getPrincipal();
-        return RestResponse.success(this.agencyService.findAgencyByCount(agency));
+        return RestResponse.success(this.agencyService.findAgencyByCount(agency).getValue());
     }
 
-    @GetMapping("agency/list")
+    @GetMapping("/agency/list")
     public RestResponse<PageData<Agency>> listAgencies(AgencyForm agencyForm, PageParams pageParams) {
         Agency agency = (Agency) SecurityUtils.getSubject().getPrincipal();
         agencyForm.setId(agency.getId());
-        agencyForm.setType(agencyForm.getType());
         Page<Agency> page = agencyService.listAgencies(agencyForm, pageParams.pageable());
         return RestResponse.success(PageData.bulid(page));
+    }
+
+    @GetMapping("/agency/{id}")
+    public RestResponse<Agency> findAgencyById(@PathVariable("id") Long agencyId) {
+        Agency agency = this.agencyService.findAgencyById(agencyId);
+        return RestResponse.success(agency);
+    }
+    @PutMapping("/agency/edit")
+    public RestResponse<Agency> updateAgency(@RequestBody AgencyForm agencyForm) {
+        this.agencyService.updateAgency(agencyForm);
+        return RestResponse.success();
     }
 
 }

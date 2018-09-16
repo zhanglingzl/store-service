@@ -29,7 +29,7 @@ public interface WechatAuthService {
      * 保存代理账户
      * @param agency
      */
-    void saveAgency(Agency agency);
+    Agency saveAgency(Agency agency);
 
     /**
      * 获取微信jssdk数据

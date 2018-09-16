@@ -15,5 +15,6 @@ public class AgencyForm {
     private String name;
     private String wechat;
     private String telephone;
+    private String email;
 
 }

@@ -3,6 +3,7 @@ package com.rxr.store.common.util;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.IsoFields;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 
 /**
@@ -120,12 +121,13 @@ public class DateHelper {
 
     /**
      * localDateTime转换为格式化时间
-     * @param localDateTime localDateTime
+     * @param date date
      * @param pattern 格式
      * @return
      */
-    public static String format(LocalDateTime localDateTime, String pattern){
+    public static String format(Date date, String pattern){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+        LocalDateTime localDateTime = dateToLocalDateTime(date);
         return localDateTime.format(formatter);
     }
 
@@ -134,10 +136,45 @@ public class DateHelper {
         LocalDateTime.parse(date, df);
         return localDateTimeToDate(LocalDateTime.parse(date, df));
     }
+    public static Date getFirstDayofMounth(Date date) {
+        LocalDateTime localDateTime = dateToLocalDateTime(date);
+        LocalDateTime firstDay = localDateTime.with(TemporalAdjusters.firstDayOfMonth());
+        firstDay = LocalDateTime.of(firstDay.toLocalDate(),LocalTime.of(0,0,0));
+        return localDateTimeToDate(firstDay);
+    }
+    public static Date getLastDayofMounth(Date date) {
+        LocalDateTime localDateTime = dateToLocalDateTime(date);
+        LocalDateTime lastDay = localDateTime.with(TemporalAdjusters.lastDayOfMonth());
+        lastDay = LocalDateTime.of(lastDay.toLocalDate(),LocalTime.of(23,59,59));
+        return localDateTimeToDate(lastDay);
+    }
+    public static Date getFirstDayofMounth() {
+        return getFirstDayofMounth(null);
+    }
 
-    public static void main(String[] args) {
-        format(LocalDateTime.now(),"yyyyMMddHHmmss");
-        System.out.println(System.currentTimeMillis());
+    public static Date getLastDayofMounth() {
+        return getLastDayofMounth(null);
+    }
+
+    public static Date minusMonths(Date date, int month) {
+        LocalDateTime localDateTime = dateToLocalDateTime(date);
+        LocalDateTime temp = LocalDateTime.of(localDateTime.minusMonths(month).toLocalDate(),localDateTime.toLocalTime());
+        return localDateTimeToDate(temp);
+    }
+
+    public static Date plusMonths(Date date, int month) {
+        LocalDateTime localDateTime = dateToLocalDateTime(date);
+        LocalDateTime temp = LocalDateTime.of(localDateTime.plusMonths(month).toLocalDate(),localDateTime.toLocalTime());
+        return localDateTimeToDate(temp);
+    }
+        public static void main(String[] args) {
+        Date date = new Date();
+        Date date1 = getFirstDayofMounth(date);
+        System.out.println(format(date1,"yyyy-MM-dd HH:mm:ss"));
+        Date date2 = getLastDayofMounth();
+        Date date3 = minusMonths(date1, 6);
+        System.out.println(format(date2,"yyyy-MM-dd HH:mm:ss"));
+            System.out.println(format(date3,"yyyy-MM-dd HH:mm:ss"));
     }
 
 

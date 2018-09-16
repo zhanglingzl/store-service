@@ -12,6 +12,7 @@ public class XmlUtils {
     public static void parseElement(List<Element> dataEle, Map<String, String> dataMap) {
         dataEle.forEach(element -> {
             if(element.hasContent()) {
+                //noinspection unchecked
                 parseElement(element.elements(),dataMap);
             }
             dataMap.put(element.getName(), element.getTextTrim());

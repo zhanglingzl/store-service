@@ -1,5 +1,6 @@
 package com.rxr.store.common.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -33,7 +34,8 @@ public class Agency extends BaseEntity{
     @Column(name = "ag_pid")
     private Long parentId;
     /**
-     * 代理等级，0：普通会员，1：vip会员
+     * 代理等级，0：普通会员，1：琥珀,2:蜜蜡,
+     * 3:欧珀,4:红宝,5:翡翠,6:钻石
      */
     @Column(name = "ag_level")
     private Integer level;

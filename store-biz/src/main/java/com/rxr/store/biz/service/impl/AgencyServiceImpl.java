@@ -10,6 +10,8 @@ import com.rxr.store.common.enums.AgencyEnum;
 import com.rxr.store.common.form.AgencyForm;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,6 +22,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -152,21 +155,28 @@ public class AgencyServiceImpl implements AgencyService{
     }
 
     @Override
-    public int[] findAgencyByCount(Agency agency) {
+    public Pair<List<Long>, int[]> findAgencyByCount(Agency agency) {
         int[] counts = new int[3];
+        List<Long> parentIds = new ArrayList<>();
         //查询一级代理的
-        List<Long> first = this.agencyRepository.findAgenciesByParentIdIn(Arrays.asList(agency.getId()));
+        List<Agency> firstAgency = this.agencyRepository.findAgenciesByParentIdIn(Arrays.asList(agency.getId()));
+        List<Long> first = firstAgency.stream().map(Agency::getId).collect(Collectors.toList());
+        parentIds.addAll(first);
         counts[0] = first.size();
         if(first.size() > 0) {
-            List<Long> second = this.agencyRepository.findAgenciesByParentIdIn(first);
+            List<Agency> secondAgency = this.agencyRepository.findAgenciesByParentIdIn(first);
+            List<Long> second = secondAgency.stream().map(Agency::getId).collect(Collectors.toList());
+            parentIds.addAll(second);
             counts[1] = second.size();
             if(second.size() > 0) {
-                List<Long> third = this.agencyRepository.findAgenciesByParentIdIn(second);
+                List<Agency> thirdAgency = this.agencyRepository.findAgenciesByParentIdIn(second);
+                List<Long> third = thirdAgency.stream().map(Agency::getId).collect(Collectors.toList());
+                parentIds.addAll(third);
                 counts[2] = third.size();
             }
         }
 
-        return counts;
+        return ImmutablePair.of(parentIds, counts);
     }
 
     @Override
@@ -178,17 +188,22 @@ public class AgencyServiceImpl implements AgencyService{
                     predicate.getExpressions().add(criteriaBuilder.equal(root.get("parentId"),agencyForm.getId()));
                     break;
                 case 2:
-                    List<Long> second = this.agencyRepository.findAgenciesByParentIdIn(Arrays
+                    List<Agency> second = this.agencyRepository.findAgenciesByParentIdIn(Arrays
                             .asList(agencyForm.getId()));
-                    getChildAgencyHql(root, criteriaBuilder, predicate, second);
+                    getChildAgencyHql(root, criteriaBuilder, predicate, second.stream().map(Agency::getId)
+                            .collect(Collectors.toList()));
 
                     break;
                 case 3:
-                    List<Long> temp = this.agencyRepository.findAgenciesByParentIdIn(Arrays
+                    List<Agency> temp = this.agencyRepository.findAgenciesByParentIdIn(Arrays
                             .asList(agencyForm.getId()));
                     if(temp.size() > 0) {
-                        List<Long> third = this.agencyRepository.findAgenciesByParentIdIn(temp);
-                        getChildAgencyHql(root, criteriaBuilder, predicate, third);
+                        List<Agency> third = this.agencyRepository.findAgenciesByParentIdIn(temp.stream().map(Agency::getId)
+                                .collect(Collectors.toList()));
+                        getChildAgencyHql(root, criteriaBuilder, predicate, third.stream().map(Agency::getId)
+                                .collect(Collectors.toList()));
+                    } else {
+                        predicate.getExpressions().add(criteriaBuilder.equal(root.get("id"),-100));
                     }
                     break;
                 default:
@@ -196,6 +211,36 @@ public class AgencyServiceImpl implements AgencyService{
             }
             return predicate;
         },Pageable);
+    }
+
+    @Override
+    public Agency findAgencyById(Long agencyId) {
+        return agencyRepository.findAgenciesById(agencyId);
+    }
+
+    @Override
+    public List<Agency> listAgenciesByParentIds(List<Long> parentIds) {
+        return agencyRepository.findAgenciesByParentIdIn(parentIds);
+    }
+
+    @Override
+    public void updateAgency(AgencyForm agencyForm) {
+        Agency agency = this.agencyRepository.findAgenciesById(agencyForm.getId());
+        if(StringUtils.isNotBlank(agencyForm.getName())) {
+            agency.setName(agencyForm.getName());
+        }
+        if(StringUtils.isNotBlank(agencyForm.getTelephone())) {
+            agency.setTelephone(agencyForm.getTelephone());
+        }
+        if(StringUtils.isNotBlank(agencyForm.getEmail())) {
+            agency.setEmail(agencyForm.getEmail());
+        }
+
+        if(StringUtils.isNotBlank(agencyForm.getWechat())) {
+            agency.setWechat(agencyForm.getWechat());
+        }
+        this.agencyRepository.save(agency);
+
     }
 
     private void getChildAgencyHql(Root<Agency> root, CriteriaBuilder criteriaBuilder,
@@ -207,6 +252,8 @@ public class AgencyServiceImpl implements AgencyService{
                 in.value(iterator.next());
             }
             predicate.getExpressions().add(in);
+        } else {
+            predicate.getExpressions().add(criteriaBuilder.equal(root.get("id"),-100));
         }
     }
 }
