@@ -1,6 +1,8 @@
 package com.rxr.store.web.controller;
 
+import com.rxr.store.biz.service.DigitalWalletService;
 import com.rxr.store.common.entity.Agency;
+import com.rxr.store.common.entity.DigitalWallet;
 import com.rxr.store.common.util.XmlUtils;
 import com.rxr.store.core.JWTToken;
 import com.rxr.store.core.util.JWTHelper;
@@ -8,7 +10,6 @@ import com.rxr.store.web.common.dto.RestResponse;
 import com.rxr.store.wechat.model.WechatAuth;
 import com.rxr.store.wechat.model.menu.Menu;
 import com.rxr.store.wechat.service.WechatAuthService;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -16,7 +17,6 @@ import org.apache.shiro.subject.Subject;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-import org.dom4j.io.XMLResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,8 +34,15 @@ import java.util.Map;
 @RestController
 @RequestMapping("/wechat/auth")
 public class WechatAuthController {
+    private final WechatAuthService wechatAuthService;
+
+    private final DigitalWalletService walletService;
+
     @Autowired
-    private WechatAuthService wechatAuthService;
+    public WechatAuthController(DigitalWalletService walletService, WechatAuthService wechatAuthService) {
+        this.walletService = walletService;
+        this.wechatAuthService = wechatAuthService;
+    }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public void auth(WechatAuth auth, HttpServletResponse response) {
@@ -78,12 +84,20 @@ public class WechatAuthController {
                             agency.setParentId(Long.valueOf(result.get("EventKey").split("_")[1]));
                         }
                         agency.setType(0);
-                        this.wechatAuthService.saveAgency(agency);
+                        agency.setLevel(0);
+                        agency = this.wechatAuthService.saveAgency(agency);
+                        DigitalWallet digitalWallet = new DigitalWallet();
+                        digitalWallet.setAgency(agency);
+                        this.walletService.saveWallet(digitalWallet);
                         break;
                     case "SCAN":
                         agency.setParentId(Long.valueOf(result.get("EventKey")));
                         agency.setType(0);
-                        this.wechatAuthService.saveAgency(agency);
+                        agency.setLevel(0);
+                        agency = this.wechatAuthService.saveAgency(agency);
+                        DigitalWallet digitalWallet1 = new DigitalWallet();
+                        digitalWallet1.setAgency(agency);
+                        this.walletService.saveWallet(digitalWallet1);
                         break;
                 }
             }
@@ -117,8 +131,8 @@ public class WechatAuthController {
     public RestResponse login(@RequestParam("code") String code) {
         Subject subject = SecurityUtils.getSubject();
         if(!subject.isAuthenticated()) {
-            //Agency agency = wechatAuthService.findAgencyByCode(code);
-            Agency agency = wechatAuthService.findAgencyByWechatId("oArUD1huOrlocCNmH4UgheHEBIgc");
+            Agency agency = wechatAuthService.findAgencyByCode(code);
+            //Agency agency = wechatAuthService.findAgencyByWechatId("oArUD1huOrlocCNmH4UgheHEBIgc");
             if(agency == null) {
                 throw new RuntimeException("未找到agency");
             }

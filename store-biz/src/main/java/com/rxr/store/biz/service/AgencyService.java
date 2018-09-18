@@ -3,6 +3,8 @@ package com.rxr.store.biz.service;
 import com.rxr.store.common.entity.Agency;
 import com.rxr.store.common.dto.AgencyDto;
 import com.rxr.store.common.form.AgencyForm;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -40,7 +42,13 @@ public interface AgencyService {
      */
     void verifyUpdate(Long id);
 
-    int[] findAgencyByCount(Agency agency);
+    Pair<List<Long>, int[]> findAgencyByCount(Agency agency);
 
     Page<Agency> listAgencies(AgencyForm type, Pageable pageable);
+
+    Agency findAgencyById(Long agencyId);
+
+    List<Agency> listAgenciesByParentIds(List<Long> parentIds);
+
+    void updateAgency(AgencyForm agencyForm);
 }

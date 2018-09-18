@@ -9,7 +9,9 @@ import java.nio.charset.Charset;
 import java.util.*;
 
 public final class HashUtils {
+    @SuppressWarnings("UnstableApiUsage")
     private static final HashFunction SHA_1 = Hashing.sha1();
+    @SuppressWarnings("UnstableApiUsage")
     private static final HashFunction MD5 = Hashing.md5();
 
     public enum SignType {

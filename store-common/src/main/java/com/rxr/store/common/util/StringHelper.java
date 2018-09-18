@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.servlet.http.HttpServletRequest;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 public class StringHelper {
     /**流水号加1后返回，流水号长度为6*/
@@ -22,7 +23,7 @@ public class StringHelper {
      * 生成支付订单号
      */
     public static String getPayTradeNo() {
-        return "rxr_" + DateHelper.format(LocalDateTime.now(),"yyyyMMddHHmmss")+"_"
+        return "rxr_" + DateHelper.format(new Date(),"yyyyMMddHHmmss")+"_"
                 + RandomStringUtils.random(6, false, true);
     }
 

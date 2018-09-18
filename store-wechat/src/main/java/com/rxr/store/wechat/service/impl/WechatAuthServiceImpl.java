@@ -27,9 +27,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.*;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -41,14 +41,17 @@ public class WechatAuthServiceImpl implements WechatAuthService {
     private static AccessToken token;
     private static AccessToken jsSdkTicket;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
+    private final WechatAuthRepository repository;
+    private final TradeService tradeService;
 
     @Autowired
-    private WechatAuthRepository repository;
+    public WechatAuthServiceImpl(RestTemplate restTemplate, WechatAuthRepository repository, TradeService tradeService) {
+        this.restTemplate = restTemplate;
+        this.repository = repository;
+        this.tradeService = tradeService;
+    }
 
-    @Autowired
-    private TradeService tradeService;
 
     @Override
     public boolean checkSignature(WechatAuth auth){
@@ -124,6 +127,7 @@ public class WechatAuthServiceImpl implements WechatAuthService {
             agency = this.findAgencyByWechatId(openId);
             if(agency != null && StringUtils.isBlank(agency.getAvatar())) {
                 this.findAgencyByWechat(accessToken,agency);
+                this.repository.save(agency);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -132,8 +136,9 @@ public class WechatAuthServiceImpl implements WechatAuthService {
     }
 
     @Override
-    public void saveAgency(Agency agency) {
-        this.repository.save(agency);
+    @Transactional(rollbackFor = Exception.class)
+    public Agency saveAgency(Agency agency) {
+        return this.repository.save(agency);
     }
 
     @Override

@@ -56,6 +56,7 @@ public class WechatController {
         Agency agency = (Agency) SecurityUtils.getSubject().getPrincipal();
         trade.setAgency(agency);
         trade.setCreateIp(StringHelper.getIp(request));
+        trade.setPayStatus(0);
         WechatJSPay wechatJSPay = this.wechatAuthService.wechatJSPay(trade);
         log.info(wechatJSPay.toString());
         return RestResponse.success(wechatJSPay);

@@ -42,6 +42,8 @@ public class Trade extends BaseEntity {
     private String remark;
     /**付款状态, 0: 待支付, 1: 支付成功(待收货), 2: 已完成, -1: 支付失败*/
     private Integer payStatus;
+    /**是否已入账 0:未入账, 1: 已入账*/
+    private Integer passEntry;
 
     /**发货状态 0: 未发货, 1: 部分发货, 2:已发货*/
     private Integer shipStatus;
