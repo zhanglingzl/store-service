@@ -3,6 +3,7 @@ package com.rxr.store.biz.service;
 import com.rxr.store.common.entity.Product;
 import com.rxr.store.common.form.ProductForm;
 import com.rxr.store.common.form.ProductQrCodeForm;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.List;
 
@@ -39,4 +40,11 @@ public interface ProductService {
      * @param id 商品ID
      */
     void deleteProductById(Long id);
+
+    /**
+     * 保存商品封面及图片
+     * @param productNo 商品编号
+     * @param multipartRequest 文件request
+     */
+    void saveProductImage(String productNo, MultipartHttpServletRequest multipartRequest);
 }

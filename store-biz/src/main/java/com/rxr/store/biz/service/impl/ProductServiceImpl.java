@@ -12,13 +12,18 @@ import com.rxr.store.common.entity.ProductQrCode;
 import com.rxr.store.common.form.ProductForm;
 import com.rxr.store.common.form.ProductQrCodeForm;
 import com.rxr.store.common.util.DateHelper;
+import com.rxr.store.common.util.FileHelper;
 import com.rxr.store.common.util.StringHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.persistence.criteria.Predicate;
+import java.io.File;
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +37,9 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService{
     @Value("store.wechatUrl")
     private static String wechatUrl;
+
+    @Value("file.path")
+    private static String filePath;
 
     @Autowired
     private ProductRepository repository;
@@ -135,5 +143,32 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public void deleteProductById(Long id) {
         this.repository.deleteById(id);
+    }
+
+    @Override
+    public void saveProductImage(String productNo, MultipartHttpServletRequest multipartRequest) {
+        FileHelper.deleteDir(new File(filePath + File.separator + productNo));
+        multipartRequest.getFiles(("imageList")).forEach(multipartFile -> writeFile(multipartFile, filePath + File.separator + productNo));
+        multipartRequest.getFiles(("coverList")).forEach(multipartFile -> writeFile(multipartFile, filePath + File.separator + productNo));
+    }
+
+    private void writeFile(MultipartFile multipartFile, String filePath){
+        // 创建文件实例
+        File tempFile = new File(filePath + File.separator + multipartFile.getOriginalFilename());
+        // 判断父级目录是否存在，不存在则创建
+        if (!tempFile.getParentFile().exists()) {
+            tempFile.getParentFile().mkdir();
+        }
+        // 判断文件是否存在，否则创建文件
+        if (!tempFile.exists()) {
+            tempFile.mkdir();
+        }
+
+        // 将接收的文件保存到指定文件中
+        try {
+            multipartFile.transferTo(tempFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

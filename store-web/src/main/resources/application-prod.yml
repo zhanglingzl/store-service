@@ -33,3 +33,6 @@ spring:
 #    use-generated-keys: true
 #    default-executor-type: reuse
 #    default-statement-timeout: 600
+
+file:
+  path: "d:\\images"
