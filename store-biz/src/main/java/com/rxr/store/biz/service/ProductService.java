@@ -3,6 +3,7 @@ package com.rxr.store.biz.service;
 import com.rxr.store.common.entity.Product;
 import com.rxr.store.common.form.ProductForm;
 import com.rxr.store.common.form.ProductQrCodeForm;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.List;
@@ -20,6 +21,10 @@ public interface ProductService {
      */
     List<Product> getProducts(ProductForm productForm);
 
+    /**
+     * 保存或更新产品信息
+     * @param product 产品对象
+     */
     void saveOrUpdateProduct(Product product);
 
     /**
@@ -30,8 +35,8 @@ public interface ProductService {
 
     /***
      * 根据商品编号查询商品
-     * @param productNo
-     * @return
+     * @param productNo 产品编号
+     * @return 产品对象
      */
     Product findProductByProductNo(String productNo);
 
@@ -43,8 +48,8 @@ public interface ProductService {
 
     /**
      * 保存商品封面及图片
-     * @param productNo 商品编号
-     * @param multipartRequest 文件request
+     * @param file MultipartFile
+     * @param uid 图片唯一编码
      */
-    void saveProductImage(String productNo, MultipartHttpServletRequest multipartRequest);
+    void saveProductImage(MultipartFile file, String uid);
 }

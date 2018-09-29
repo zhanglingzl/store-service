@@ -19,14 +19,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.persistence.criteria.Predicate;
-import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -146,29 +145,12 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public void saveProductImage(String productNo, MultipartHttpServletRequest multipartRequest) {
-        FileHelper.deleteDir(new File(filePath + File.separator + productNo));
-        multipartRequest.getFiles(("imageList")).forEach(multipartFile -> writeFile(multipartFile, filePath + File.separator + productNo));
-        multipartRequest.getFiles(("coverList")).forEach(multipartFile -> writeFile(multipartFile, filePath + File.separator + productNo));
-    }
-
-    private void writeFile(MultipartFile multipartFile, String filePath){
-        // 创建文件实例
-        File tempFile = new File(filePath + File.separator + multipartFile.getOriginalFilename());
-        // 判断父级目录是否存在，不存在则创建
-        if (!tempFile.getParentFile().exists()) {
-            tempFile.getParentFile().mkdir();
-        }
-        // 判断文件是否存在，否则创建文件
-        if (!tempFile.exists()) {
-            tempFile.mkdir();
-        }
-
-        // 将接收的文件保存到指定文件中
+    public void saveProductImage(MultipartFile file, String uid) {
         try {
-            multipartFile.transferTo(tempFile);
+            FileHelper.writeFile(file.getInputStream(), "d:\\images\\" + uid + Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().indexOf(".")));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 }
