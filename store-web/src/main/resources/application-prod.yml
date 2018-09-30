@@ -34,5 +34,8 @@ spring:
 #    default-executor-type: reuse
 #    default-statement-timeout: 600
 
-file:
-  path: "d:\\images"
+
+store:
+  imagePath: d:\storeImages\
+  imageTempPath: d:\storeTemp\
+  imageUrl: http://localhost/storeImages/

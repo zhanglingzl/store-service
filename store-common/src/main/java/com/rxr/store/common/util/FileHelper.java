@@ -60,7 +60,7 @@ public class FileHelper {
         File tempFile = new File(filePath);
         // 判断父级目录是否存在，不存在则创建
         if (!tempFile.getParentFile().exists()) {
-            tempFile.getParentFile().mkdir();
+            tempFile.getParentFile().mkdirs();
         }
         // 判断文件是否存在，否则创建文件
         if (!tempFile.exists()) {
@@ -80,6 +80,9 @@ public class FileHelper {
         File sourceFile = new File(source);
         File destFile = new File(dest);
         if(sourceFile.exists()){
+            if (!destFile.getParentFile().exists()) {
+                destFile.getParentFile().mkdirs();
+            }
             if(!destFile.exists()){
                 destFile.createNewFile();
             }

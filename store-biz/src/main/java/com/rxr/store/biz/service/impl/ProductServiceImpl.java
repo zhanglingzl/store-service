@@ -1,5 +1,6 @@
 package com.rxr.store.biz.service.impl;
 
+import com.google.common.collect.Lists;
 import com.rxr.store.biz.repositories.AgencyRepository;
 import com.rxr.store.biz.repositories.ProductQrCodeRepository;
 import com.rxr.store.biz.repositories.ProductRepository;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.criteria.Predicate;
+import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -37,8 +39,14 @@ public class ProductServiceImpl implements ProductService{
     @Value("store.wechatUrl")
     private static String wechatUrl;
 
-    @Value("file.path")
-    private static String filePath;
+    @Value("${store.imageTempPath}")
+    private String imageTempPath;
+
+    @Value("${store.imagePath}")
+    private String imagePath;
+
+    @Value("${store.imageUrl}")
+    private String imageUrl;
 
     @Autowired
     private ProductRepository repository;
@@ -49,6 +57,8 @@ public class ProductServiceImpl implements ProductService{
     @Autowired
     private ProductQrCodeRepository qrCodeRepository;
 
+    private static final String  UID_STATUS = "$$";
+
     @Override
     public List<Product> getProducts(ProductForm productForm) {
         List<Product> productList = repository.findAll((root, query, criteriaBuilder) -> {
@@ -58,11 +68,15 @@ public class ProductServiceImpl implements ProductService{
             }
             return predicate;
         });
+        productList.forEach(product -> product.setImageUrl(imageUrl));
         return productList;
     }
 
     @Override
     public void saveOrUpdateProduct(Product product) {
+        copyImage(product.getImages(), product.getProductNo());
+        copyImage(product.getCover(), product.getProductNo());
+        convertCoverAndImages(product);
         repository.save(product);
     }
 
@@ -147,10 +161,33 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public void saveProductImage(MultipartFile file, String uid) {
         try {
-            FileHelper.writeFile(file.getInputStream(), "d:\\images\\" + uid + Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().indexOf(".")));
+            FileHelper.writeFile(file.getInputStream(), imageTempPath + uid + Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().indexOf(".")));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 将封面及图片中的$$替换为空
+     *  <pre>名称中包含$$为已经上传的文件</pre>
+     * @param product 产品
+     */
+    private void convertCoverAndImages(Product product){
+        product.setCover(product.getCover().replace(UID_STATUS, ""));
+        product.setImages(product.getImages().replace(UID_STATUS, ""));
+    }
+
+    private void copyImage(String images, String productNo){
+        Lists.newArrayList(images.split(",")).forEach(image -> {
+            try {
+                if(!image.contains(UID_STATUS)){
+                    FileHelper.copyFile(imageTempPath + image, imagePath + productNo + File.separator + image);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
 
 }
