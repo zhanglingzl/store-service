@@ -162,6 +162,12 @@ public class DateHelper {
         return localDateTimeToDate(temp);
     }
 
+    public static Date minusMinutes(Date date, int minutes) {
+        LocalDateTime localDateTime = dateToLocalDateTime(date);
+        LocalDateTime temp = LocalDateTime.of(localDateTime.toLocalDate(),localDateTime.minusMinutes(minutes).toLocalTime());
+        return localDateTimeToDate(temp);
+    }
+
     public static Date plusMonths(Date date, int month) {
         LocalDateTime localDateTime = dateToLocalDateTime(date);
         LocalDateTime temp = LocalDateTime.of(localDateTime.plusMonths(month).toLocalDate(),localDateTime.toLocalTime());
@@ -172,7 +178,7 @@ public class DateHelper {
         Date date1 = getFirstDayofMounth(date);
         System.out.println(format(date1,"yyyy-MM-dd HH:mm:ss"));
         Date date2 = getLastDayofMounth();
-        Date date3 = minusMonths(date1, 6);
+        Date date3 = minusMinutes(date, 30);
         System.out.println(format(date2,"yyyy-MM-dd HH:mm:ss"));
             System.out.println(format(date3,"yyyy-MM-dd HH:mm:ss"));
     }

@@ -27,11 +27,6 @@ public class Product extends BaseEntity{
     private String productName;
 
     /**
-     * 商品价格
-     */
-    @Column(name = "product_price")
-    private String productPrice;
-    /**
      * 商品作用
      */
     @Column(name = "product_effect")

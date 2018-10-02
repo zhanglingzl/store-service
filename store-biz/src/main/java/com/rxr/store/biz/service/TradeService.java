@@ -18,4 +18,10 @@ public interface TradeService {
     List<Long> listAgencyIds(Agency agency);
 
     Double[] getSemiannualTrade(List<Agency> agencies, int month);
+
+    Trade findTradeByTradeNo(String tradeNo);
+
+    void removeExpireTimeTrade();
+
+    Double getTotalAmount(Agency agency);
 }

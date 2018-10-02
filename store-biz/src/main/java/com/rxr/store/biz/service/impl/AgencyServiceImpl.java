@@ -22,10 +22,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -190,18 +187,27 @@ public class AgencyServiceImpl implements AgencyService{
                 case 2:
                     List<Agency> second = this.agencyRepository.findAgenciesByParentIdIn(Arrays
                             .asList(agencyForm.getId()));
-                    getChildAgencyHql(root, criteriaBuilder, predicate, second.stream().map(Agency::getId)
-                            .collect(Collectors.toList()));
+                    if(second.size() > 0) {
+                        predicate.getExpressions().add(root.get("parentId").in(second.stream()
+                                .map(Agency::getId).collect(Collectors.toList())));
+                    } else {
+                        predicate.getExpressions().add(criteriaBuilder.equal(root.get("id"), -100));
+                    }
 
                     break;
                 case 3:
                     List<Agency> temp = this.agencyRepository.findAgenciesByParentIdIn(Arrays
                             .asList(agencyForm.getId()));
                     if(temp.size() > 0) {
-                        List<Agency> third = this.agencyRepository.findAgenciesByParentIdIn(temp.stream().map(Agency::getId)
-                                .collect(Collectors.toList()));
-                        getChildAgencyHql(root, criteriaBuilder, predicate, third.stream().map(Agency::getId)
-                                .collect(Collectors.toList()));
+                        List<Agency> third = this.agencyRepository.findAgenciesByParentIdIn(temp.stream()
+                                .map(Agency::getId).collect(Collectors.toList()));
+                        if(third.size() > 0) {
+                            predicate.getExpressions().add(root.get("parentId").in(third.stream()
+                                    .map(Agency::getId).collect(Collectors.toList())));
+                        } else {
+                            predicate.getExpressions().add(criteriaBuilder.equal(root.get("id"),-100));
+                        }
+
                     } else {
                         predicate.getExpressions().add(criteriaBuilder.equal(root.get("id"),-100));
                     }

@@ -1,6 +1,7 @@
 package com.rxr.store.wechat.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.collect.ImmutableMap;
 import com.rxr.store.biz.service.TradeService;
 import com.rxr.store.common.dto.WechatJSPay;
 import com.rxr.store.common.entity.Agency;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dom4j.*;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -32,6 +34,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.*;
 
 @Slf4j
@@ -75,10 +78,10 @@ public class WechatAuthServiceImpl implements WechatAuthService {
         Button btn = new Button();
         btn.setName("服务中心");
         Button[] subButon = new Button[] {
-            new Button(Button.Type.view,"资质认证","http://wechat.greenleague.xin/wechat/certification"),
-            new Button(Button.Type.view,"公司简介","http://wechat.greenleague.xin/wechat/company-profile"),
-            new Button(Button.Type.view,"培训资料","http://wechat.greenleague.xin/wechat/train"),
-            new Button(Button.Type.view,"成为代理","http://wechat.greenleague.xin/wechat/agency"),
+            new Button(Button.Type.view,"资质认证","http://wechat.greenleague.xin/introduce/certification"),
+            new Button(Button.Type.view,"公司简介","http://wechat.greenleague.xin/introduce/company-profile"),
+            new Button(Button.Type.view,"培训资料","http://wechat.greenleague.xin/introduce/train"),
+                new Button(Button.Type.view,"成为代理","http://wechat.greenleague.xin/introduce/agency"),
             new Button(Button.Type.view,"个人中心","http://wechat.greenleague.xin/wechat/personal-center")
 
         };
@@ -221,8 +224,18 @@ public class WechatAuthServiceImpl implements WechatAuthService {
         Map<String, String> result = new HashMap<>();
         XmlUtils.parseElement(document.getRootElement().elements(), result);
         Trade trade = new Trade();
+
         if("SUCCESS".equals(result.get("result_code")) && "SUCCESS".equals(result.get("return_code"))) {
             trade.setPayStatus(1);
+            //发送消息
+            Agency agency = this.findAgencyByWechatId(result.get("openid"));
+            Agency parentAgency = this.findAgencyById(agency.getParentId());
+            Trade temp = this.tradeService.findTradeByTradeNo(result.get("out_trade_no"));
+            this.sendTradeMessage(agency.getWechatId(),agency, result, temp);
+            if(agency.getParentId() != null && agency.getParentId() != 10000) {
+                this.sendTradeMessage(parentAgency.getWechatId(), agency, result, temp);
+            }
+
         } else {
             trade.setPayStatus(-1);
         }
@@ -231,6 +244,49 @@ public class WechatAuthServiceImpl implements WechatAuthService {
         trade.setTransactionId(result.get("transaction_id"));
         trade.setTradeNo(result.get("out_trade_no"));
         this.tradeService.updateTrade(trade);
+    }
+
+    private void sendTradeMessage(String wechatId, Agency agency, Map<String, String> result, Trade trade) {
+        try {
+            initAccessToken();
+            Date payEnd = DateHelper.format(result.get("time_end"), "yyyyMMddHHmmss");
+            String url = AuthUtil.MESSAGE_SEND_URL.replace("ACCESS_TOKEN", token.getAccessToken());
+            HttpHeaders headers = new HttpHeaders();
+            MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+            headers.setContentType(type);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("touser", wechatId);
+            jsonObject.put("template_id", AuthUtil.MESSAGE_TEMPLATE_ID);
+            Map<Object, Object> data = ImmutableMap.builder()
+                    .put("first", ImmutableMap.builder()
+                            .put("value",MessageFormat.format("恭喜{0} 会员编号{1}购买成功",
+                            agency.getName(), String.valueOf(agency.getId())))
+                            .put("color", "#173177")
+                            .build())
+                    .put("keyword1", ImmutableMap.builder()
+                            .put("value", trade.getTradeNo())
+                            .put("color", "#173177").build())
+                    .put("keyword2", ImmutableMap.builder()
+                            .put("value", "润玺尔*唇膏")
+                            .put("color", "#173177").build())
+                    .put("keyword3", ImmutableMap.builder()
+                            .put("value", trade.getTotalCount())
+                            .put("color", "#173177").build())
+                    .put("keyword4", ImmutableMap.builder()
+                            .put("value", trade.getPayableAmount())
+                            .put("color", "#173177").build())
+                    .put("remark", ImmutableMap.builder()
+                            .put("value","欢迎再次购买！ 付款时间: "
+                                    + DateHelper.format(payEnd,"yyyy-MM-dd"))
+                            .put("color", "#173177").build())
+                    .build();
+            jsonObject.put("data", data);
+            HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(),headers);
+            String message = restTemplate.postForObject(url, entity, String.class);
+            log.info(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private WechatJSPay getWechatJsPay(Trade trade) {
@@ -266,7 +322,7 @@ public class WechatAuthServiceImpl implements WechatAuthService {
         elementMap.put("out_trade_no", trade.getTradeNo());
         elementMap.put("total_fee", String.valueOf(trade.getPayableAmount()
                 .multiply(new BigDecimal("100")).intValue()));
-        elementMap.put("total_fee", "10");
+        //elementMap.put("total_fee", "10");
         elementMap.put("spbill_create_ip", trade.getCreateIp());
         elementMap.put("sign_type","MD5");
         elementMap.put("notify_url", AuthUtil.PAY_NOTIFY_URL);
@@ -300,6 +356,14 @@ public class WechatAuthServiceImpl implements WechatAuthService {
         }
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void setAgencyLevel(Agency agency) {
+        double amount = this.tradeService.getTotalAmount(agency);
+        if(amount > 300) {
+            this.repository.updateAgencyLevelById(1, agency.getId());
+        }
+    }
 
     private void findAgencyByWechat(String accessToken, Agency agency) throws Exception {
         String url = AuthUtil.AUTH_USER_INFO_URL.replace("ACCESS_TOKEN", accessToken)
@@ -309,7 +373,7 @@ public class WechatAuthServiceImpl implements WechatAuthService {
         JsonNode node = JsonUtil.json2pojo(result.getBody(), JsonNode.class);
         agency.setAvatar(node.get("headimgurl").asText());
         agency.setGender(node.get("sex").asText());
-        agency.setName(node.get("nickname").asText());
+        agency.setLikeName(node.get("nickname").asText());
     }
 
 

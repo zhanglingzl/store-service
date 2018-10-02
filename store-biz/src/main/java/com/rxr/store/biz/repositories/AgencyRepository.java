@@ -24,8 +24,7 @@ public interface AgencyRepository extends BaseRepository<Agency, Long>{
     @Query("select t.id from Answer t left join t.agency tt where t.status=?1 and tt.id=?2")
     Long updateAnswerStatusByAgencyId(int status, Long id);
 
-    @Query("select id from Agency where parentId in (:agencyIds)")
-    List<Agency> findAgenciesByParentIdIn(@Param("agencyIds") List<Long> agencyIds);
+    List<Agency> findAgenciesByParentIdIn(List<Long> agencyIds);
 
     Agency findAgenciesById(Long id);
 

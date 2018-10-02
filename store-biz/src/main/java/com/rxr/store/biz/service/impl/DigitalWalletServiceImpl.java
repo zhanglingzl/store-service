@@ -1,16 +1,23 @@
 package com.rxr.store.biz.service.impl;
 
 import com.rxr.store.biz.repositories.DigitalWalletRepository;
+import com.rxr.store.biz.repositories.WithdrawRepository;
 import com.rxr.store.biz.service.AgencyService;
 import com.rxr.store.biz.service.DigitalWalletService;
 import com.rxr.store.biz.service.TradeService;
 import com.rxr.store.common.dto.WalletDTO;
 import com.rxr.store.common.entity.Agency;
 import com.rxr.store.common.entity.DigitalWallet;
+import com.rxr.store.common.entity.Trade;
+import com.rxr.store.common.entity.Withdraw;
 import com.rxr.store.common.form.WalletForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,13 +28,16 @@ public class DigitalWalletServiceImpl implements DigitalWalletService {
     private final TradeService tradeService;
     private final DigitalWalletRepository digitalWalletRepository;
     private final AgencyService agencyService;
+    private final WithdrawRepository withdrawRepository;
     @Autowired
-    public DigitalWalletServiceImpl(TradeService tradeService, DigitalWalletRepository digitalWalletRepository,
-                                    AgencyService agencyService) {
+    public DigitalWalletServiceImpl(TradeService tradeService,
+                                    DigitalWalletRepository digitalWalletRepository,
+                                    AgencyService agencyService,
+                                    WithdrawRepository withdrawRepository) {
         this.tradeService = tradeService;
-
         this.digitalWalletRepository = digitalWalletRepository;
         this.agencyService = agencyService;
+        this.withdrawRepository = withdrawRepository;
     }
 
     @Override
@@ -76,5 +86,21 @@ public class DigitalWalletServiceImpl implements DigitalWalletService {
         Agency agency = this.agencyService.findAgencyById(walletForm.getAgencyId());
         Double[] tradeAmount = tradeService.getSemiannualTrade(Arrays.asList(agency), 5);
         return tradeAmount;
+    }
+
+    @Override
+    public DigitalWallet getWallet(Agency agency) {
+        return this.digitalWalletRepository.findDigitalWalletByAgency(agency);
+    }
+
+    @Override
+    public Page<Withdraw> listWithdraws(Long agencyId, Pageable pageable) {
+        return withdrawRepository.findAll((root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.conjunction();
+            Join<Trade, Agency> agencyJoin = root.join("agency");
+            predicate.getExpressions().add(criteriaBuilder.equal(agencyJoin.get("id"), agencyId));
+            query.orderBy(criteriaBuilder.desc(root.get("createTime")));
+            return predicate;
+        }, pageable);
     }
 }
