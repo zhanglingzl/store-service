@@ -5,15 +5,10 @@ import com.rxr.store.common.entity.Product;
 import com.rxr.store.common.form.ProductForm;
 import com.rxr.store.common.form.ProductQrCodeForm;
 import com.rxr.store.web.common.dto.RestResponse;
-import com.sun.deploy.net.HttpResponse;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 /**

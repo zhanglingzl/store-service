@@ -8,6 +8,9 @@ import lombok.Setter;
 import java.util.List;
 
 
+/**
+ * @author zero
+ */
 @Setter
 @Getter
 public class AgencyDto {

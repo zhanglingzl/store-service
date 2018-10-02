@@ -139,7 +139,7 @@ public class ProductServiceImpl implements ProductService{
         QRCodeFactory factory = new QRCodeFactory();
         qrCodes.forEach(qrCode -> {
             try {
-                factory.CreatQrImage(qrCode.getQrContent(),qrCode.getSerialNo(),"jpg",qrCode.getQrCodeUrl(),null);
+//                factory.CreatQrImage(qrCode.getQrContent(),qrCode.getSerialNo(),"jpg",qrCode.getQrCodeUrl(),null);
             } catch (Exception e) {
                 e.printStackTrace();
             }

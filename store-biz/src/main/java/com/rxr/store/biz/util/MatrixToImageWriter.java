@@ -1,6 +1,5 @@
 package com.rxr.store.biz.util;
 
-import com.google.zxing.common.BitMatrix;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -17,7 +16,7 @@ public class MatrixToImageWriter {
     private MatrixToImageWriter() {
     }
 
-    public static BufferedImage toBufferedImage(BitMatrix matrix) {
+/*    public static BufferedImage toBufferedImage(BitMatrix matrix) {
         int width = matrix.getWidth();
         int height = matrix.getHeight();
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -60,5 +59,5 @@ public class MatrixToImageWriter {
         if (!ImageIO.write(image, format, stream)) {
             throw new IOException("Could not write an image of format " + format);
         }
-    }
+    }*/
 }

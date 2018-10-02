@@ -36,6 +36,6 @@ spring:
 
 
 store:
-  imagePath: d:\storeImages\
-  imageTempPath: d:\storeTemp\
-  imageUrl: http://localhost/storeImages/
+  imagePath: /var/www/images.greenleague.xin/images/storeImages/
+  imageTempPath: /var/www/images.greenleague.xin/images/storeTemp/
+  imageUrl: http://images.greenleague.xin/images/

@@ -1,11 +1,5 @@
 package com.rxr.store.biz.util;
 
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -16,24 +10,24 @@ import java.io.IOException;
 import java.util.Hashtable;
 
 public class QRCodeFactory {
-    /**
+ /*   *//**
      * 给生成的二维码添加中间的logo
      * @param matrixImage 生成的二维码
      * @param logUri      logo地址
      * @return            带有logo的二维码
      * @throws IOException logo地址找不到会有io异常
-     */
+     *//*
     public BufferedImage setMatrixLogo(BufferedImage matrixImage, String logUri) throws IOException {
-        /**
+        *//**
          * 读取二维码图片，并构建绘图对象
-         */
+         *//*
         Graphics2D g2 = matrixImage.createGraphics();
         int matrixWidth = matrixImage.getWidth();
         int matrixHeigh = matrixImage.getHeight();
 
-        /**
+        *//**
          * 读取Logo图片
-         */
+         *//*
         BufferedImage logo = ImageIO.read(new File(logUri));
 
         //开始绘制图片
@@ -66,7 +60,7 @@ public class QRCodeFactory {
 
 
 
-    /**
+    *//**
      * 创建我们的二维码图片
      * @param content            二维码内容
      * @param format             生成二维码的格式
@@ -75,7 +69,7 @@ public class QRCodeFactory {
      * @param size               用于设定图片大小（可变参数，宽，高）
      * @throws IOException       抛出io异常
      * @throws WriterException   抛出书写异常
-     */
+     *//*
     public  void CreatQrImage(String content,String fileName, String format,String outFileUri,String logUri, int ...size)
             throws IOException, WriterException {
 
@@ -129,5 +123,5 @@ public class QRCodeFactory {
         System.out.println("输出文件路径为"+outputFile.getPath());
 
         MatrixToImageWriter.writeToFile(bitMatrix, format, outputFile,logUri);
-    }
+    }*/
 }
