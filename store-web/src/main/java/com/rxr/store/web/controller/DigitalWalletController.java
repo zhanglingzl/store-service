@@ -1,11 +1,19 @@
 package com.rxr.store.web.controller;
 
 import com.rxr.store.biz.service.DigitalWalletService;
+import com.rxr.store.common.dto.PageParams;
 import com.rxr.store.common.dto.WalletDTO;
+import com.rxr.store.common.entity.Agency;
+import com.rxr.store.common.entity.DigitalWallet;
+import com.rxr.store.common.entity.Withdraw;
+import com.rxr.store.common.form.AgencyForm;
 import com.rxr.store.common.form.WalletForm;
 import com.rxr.store.common.util.NumberHelper;
+import com.rxr.store.web.common.dto.PageData;
 import com.rxr.store.web.common.dto.RestResponse;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,7 +29,7 @@ public class DigitalWalletController {
     }
 
     @GetMapping("/wallet/show/detail")
-    public RestResponse<WalletDTO> getWalletDT(WalletForm walletForm) {
+    public RestResponse<WalletDTO> getWalletDTO(WalletForm walletForm) {
         WalletDTO walletDTO = digitalWalletService.getWalletInfo(walletForm);
         return RestResponse.success(walletDTO);
     }
@@ -33,6 +41,19 @@ public class DigitalWalletController {
             amounts[i] = NumberHelper.divide(amounts[i], 10000D);
         }
         return RestResponse.success(amounts);
+    }
 
+    @GetMapping("/wallet/info")
+    public RestResponse<DigitalWallet> getWalletInfo() {
+        Agency agency = (Agency) SecurityUtils.getSubject().getPrincipal();
+        DigitalWallet wallet = this.digitalWalletService.getWallet(agency);
+        return RestResponse.success(wallet);
+    }
+
+    @GetMapping("/wallet/withdraw/list")
+    public RestResponse<PageData<Withdraw>> listAgencies(PageParams pageParams) {
+        Agency agency = (Agency) SecurityUtils.getSubject().getPrincipal();
+        Page<Withdraw> page = digitalWalletService.listWithdraws(agency.getId(),pageParams.pageable());
+        return RestResponse.success(PageData.bulid(page));
     }
 }

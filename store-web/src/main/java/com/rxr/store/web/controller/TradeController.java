@@ -11,6 +11,7 @@ import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -38,5 +39,11 @@ public class TradeController {
 
         Page<Trade> trades = tradeService.listTrades(tradeForm, pageParams);
         return RestResponse.success(PageData.bulid(trades));
+    }
+
+    @GetMapping("/trade/detail/{tradeNo}")
+    public RestResponse<Trade> findTradeByTradeNo(@PathVariable("tradeNo") String tradeNo) {
+        Trade trade = this.tradeService.findTradeByTradeNo(tradeNo);
+        return RestResponse.success(trade);
     }
 }

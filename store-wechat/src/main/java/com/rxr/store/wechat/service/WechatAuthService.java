@@ -50,4 +50,6 @@ public interface WechatAuthService {
      * @param document
      */
     void savePayByWechatNotify(Document document);
+
+    void setAgencyLevel(Agency agency);
 }

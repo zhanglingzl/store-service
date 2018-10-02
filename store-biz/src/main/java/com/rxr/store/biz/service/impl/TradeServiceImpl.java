@@ -8,6 +8,7 @@ import com.rxr.store.common.entity.Agency;
 import com.rxr.store.common.entity.Trade;
 import com.rxr.store.common.form.TradeForm;
 import com.rxr.store.common.util.DateHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class TradeServiceImpl implements TradeService {
 
@@ -58,11 +60,8 @@ public class TradeServiceImpl implements TradeService {
             }
             Join<Trade, Agency> agencyJoin = root.join("agency");
             if(trade.getAgencyIds() != null) {
-                CriteriaBuilder.In<Integer> status = criteriaBuilder.in(root.get("payStatus"));
-                status.value(1).value(2);
-                CriteriaBuilder.In<Long> ids = criteriaBuilder.in(agencyJoin.get("id"));
-                trade.getAgencyIds().forEach(id -> ids.value(id));
-                predicate.getExpressions().add(ids);
+                predicate.getExpressions().add(root.get("payStatus").in(1,2));
+                predicate.getExpressions().add(criteriaBuilder.notEqual(agencyJoin.get("id"), trade.getAgency().getId()));
             } else {
                 predicate.getExpressions().add(criteriaBuilder.equal(agencyJoin.get("id"), trade.getAgency().getId()));
             }
@@ -101,5 +100,28 @@ public class TradeServiceImpl implements TradeService {
             after = DateHelper.minusMonths(after,1);
         } while (flag <= month);
         return tradeAmount;
+    }
+
+    @Override
+    public Trade findTradeByTradeNo(String tradeNo) {
+        return tradeRepository.findTradeByTradeNo(tradeNo);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void removeExpireTimeTrade() {
+        Date before = DateHelper.minusMinutes(new Date(), 30);
+        log.info(DateHelper.format(before,"yyyy-MM-dd HH:mm:ss"));
+        List<Trade> expireTimeTrades = tradeRepository.findAllByPayStatusAndCreateTimeBefore(0, before);
+        expireTimeTrades.forEach(trade -> {
+            log.info("超过时间没有支付的订单: {}" + trade.toString());
+            this.tradeRepository.delete(trade);
+
+        });
+    }
+
+    @Override
+    public Double getTotalAmount(Agency agency) {
+        return tradeRepository.findTradeByAgency_IdAndPayStatus(agency.getId(), 1);
     }
 }

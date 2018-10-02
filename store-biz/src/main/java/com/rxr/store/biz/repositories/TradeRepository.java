@@ -22,4 +22,10 @@ public interface TradeRepository extends BaseRepository<Trade, Long> {
     List<Trade> findAllByPayStatusAndAgencyInAndCreateTimeBetween(Integer payStatus,
                                                                   List<Agency> agencies, Date before, Date end);
 
+    Trade findTradeByTradeNo(String tradeNo);
+
+    List<Trade> findAllByPayStatusAndCreateTimeBefore(Integer payStatus, Date before);
+
+    @Query("select coalesce(sum(payableAmount), 0) from Trade where agency=:agencyId and payStatus=:payStates")
+    Double findTradeByAgency_IdAndPayStatus(@Param("agencyId") Long agencyId, @Param("payStates") Integer payStatus);
 }

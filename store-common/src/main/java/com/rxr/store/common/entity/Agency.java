@@ -34,7 +34,7 @@ public class Agency extends BaseEntity{
     @Column(name = "ag_pid")
     private Long parentId;
     /**
-     * 代理等级，0：普通会员，1：琥珀,2:蜜蜡,
+     * 代理等级，0：普通会员 1：琥珀,2:蜜蜡,
      * 3:欧珀,4:红宝,5:翡翠,6:钻石
      */
     @Column(name = "ag_level")

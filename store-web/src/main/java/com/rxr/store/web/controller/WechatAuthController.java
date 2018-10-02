@@ -7,6 +7,7 @@ import com.rxr.store.common.util.XmlUtils;
 import com.rxr.store.core.JWTToken;
 import com.rxr.store.core.util.JWTHelper;
 import com.rxr.store.web.common.dto.RestResponse;
+import com.rxr.store.wechat.model.Message;
 import com.rxr.store.wechat.model.WechatAuth;
 import com.rxr.store.wechat.model.menu.Menu;
 import com.rxr.store.wechat.service.WechatAuthService;
@@ -108,9 +109,9 @@ public class WechatAuthController {
     }
 
     @RequestMapping(value = "/createMenu", method = RequestMethod.GET)
-    public RestResponse<String> createMenu() throws Exception{
-        this.wechatAuthService.createMenu(new Menu());
-        return RestResponse.success();
+    public RestResponse<Message> createMenu() throws Exception{
+        Message message = this.wechatAuthService.createMenu(new Menu());
+        return RestResponse.success(message);
     }
 
     /**
@@ -136,6 +137,9 @@ public class WechatAuthController {
             if(agency == null) {
                 throw new RuntimeException("未找到agency");
             }
+            //if(agency.getLevel() == 0) {
+            //    wechatAuthService.setAgencyLevel(agency);
+            //}
             JWTToken jwtToken = new JWTToken(JWTHelper.createToken(agency.getWechatId()));
             subject.login(jwtToken);
         }
