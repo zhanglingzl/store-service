@@ -38,4 +38,4 @@ spring:
 store:
   imagePath: /var/www/images.greenleague.xin/images/storeImages/
   imageTempPath: /var/www/images.greenleague.xin/images/storeTemp/
-  imageUrl: http://images.greenleague.xin/images/
+  imageUrl: http://images.greenleague.xin/storeImages/
