@@ -26,6 +26,6 @@ public interface TradeRepository extends BaseRepository<Trade, Long> {
 
     List<Trade> findAllByPayStatusAndCreateTimeBefore(Integer payStatus, Date before);
 
-    @Query("select coalesce(sum(payableAmount), 0) from Trade where agency=:agencyId and payStatus=:payStates")
-    Double findTradeByAgency_IdAndPayStatus(@Param("agencyId") Long agencyId, @Param("payStates") Integer payStatus);
+    @Query("select coalesce(sum(payableAmount), 0) from Trade where agency=:agency and payStatus=:payStates")
+    Double findTradeByAgencyAndPayStatus(@Param("agency") Agency agency, @Param("payStates") Integer payStatus);
 }

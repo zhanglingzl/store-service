@@ -46,4 +46,10 @@ public class TradeController {
         Trade trade = this.tradeService.findTradeByTradeNo(tradeNo);
         return RestResponse.success(trade);
     }
+
+    @GetMapping("/admin/trade/list")
+    public RestResponse<List<Trade>> findAllTrades(TradeForm tradeForm) {
+        List<Trade> trades = this.tradeService.findAllTrades(tradeForm);
+        return RestResponse.success(trades);
+    }
 }

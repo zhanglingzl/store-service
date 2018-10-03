@@ -61,7 +61,7 @@ public class TradeServiceImpl implements TradeService {
             Join<Trade, Agency> agencyJoin = root.join("agency");
             if(trade.getAgencyIds() != null) {
                 predicate.getExpressions().add(root.get("payStatus").in(1,2));
-                predicate.getExpressions().add(criteriaBuilder.notEqual(agencyJoin.get("id"), trade.getAgency().getId()));
+                predicate.getExpressions().add(agencyJoin.get("id").in(trade.getAgencyIds()));
             } else {
                 predicate.getExpressions().add(criteriaBuilder.equal(agencyJoin.get("id"), trade.getAgency().getId()));
             }
@@ -122,6 +122,15 @@ public class TradeServiceImpl implements TradeService {
 
     @Override
     public Double getTotalAmount(Agency agency) {
-        return tradeRepository.findTradeByAgency_IdAndPayStatus(agency.getId(), 1);
+        return tradeRepository.findTradeByAgencyAndPayStatus(agency, 1);
+    }
+
+    @Override
+    public List<Trade> findAllTrades(TradeForm tradeForm) {
+        return this.tradeRepository.findAll((root, query, criteriaBuilder) -> {
+            Predicate predicate = criteriaBuilder.conjunction();
+            query.orderBy(criteriaBuilder.desc(root.get("createTime")));
+            return predicate;
+        });
     }
 }
