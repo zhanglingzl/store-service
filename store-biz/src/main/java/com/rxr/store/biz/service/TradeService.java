@@ -24,4 +24,6 @@ public interface TradeService {
     void removeExpireTimeTrade();
 
     Double getTotalAmount(Agency agency);
+
+    List<Trade> findAllTrades(TradeForm tradeForm);
 }

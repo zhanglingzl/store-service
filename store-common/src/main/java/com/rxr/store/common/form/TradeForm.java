@@ -11,4 +11,5 @@ public class TradeForm {
     private Integer agencyFlag;
     private Agency agency;
     private List<Long> agencyIds;
+    private String name;
 }

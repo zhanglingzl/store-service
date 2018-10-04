@@ -45,7 +45,7 @@ public class Trade extends BaseEntity {
     /**是否已入账 0:未入账, 1: 已入账*/
     private Integer passEntry;
 
-    /**发货状态 0: 未发货, 1: 部分发货, 2:已发货*/
+    /**发货状态 0: 未发货 1:已发货*/
     private Integer shipStatus;
     /**微信下单返回的预支付信息, 2小时过期*/
     private String prepayId;
@@ -58,4 +58,9 @@ public class Trade extends BaseEntity {
     private String transactionId;
     /**支付完成时间*/
     private Date payEndTime;
+
+    /**物流单号*/
+    private String trackingNo;
+    /**物流公司*/
+    private String trackingName;
 }

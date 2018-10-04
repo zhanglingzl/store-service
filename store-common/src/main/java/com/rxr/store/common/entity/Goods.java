@@ -22,7 +22,6 @@ public class Goods extends BaseEntity{
     /**会员价*/
     @Column(name="product_vip_amount")
     private Double vipAmount;
-    /**物流单号*/
-    private String TrackingNo;
+
 
 }

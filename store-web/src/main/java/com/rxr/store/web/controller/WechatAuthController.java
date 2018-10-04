@@ -137,9 +137,9 @@ public class WechatAuthController {
             if(agency == null) {
                 throw new RuntimeException("未找到agency");
             }
-            //if(agency.getLevel() == 0) {
-            //    wechatAuthService.setAgencyLevel(agency);
-            //}
+            if(agency.getLevel() == 0) {
+                wechatAuthService.setAgencyLevel(agency);
+            }
             JWTToken jwtToken = new JWTToken(JWTHelper.createToken(agency.getWechatId()));
             subject.login(jwtToken);
         }
