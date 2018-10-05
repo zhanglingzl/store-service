@@ -51,4 +51,12 @@ public interface AgencyService {
     List<Agency> listAgenciesByParentIds(List<Long> parentIds);
 
     void updateAgency(AgencyForm agencyForm);
+
+    /**
+     * 代理升级
+     *
+     * @param id 代理ID
+     * @param level 代理等级
+     */
+    void agencyUpgrade(Long id, Integer level);
 }

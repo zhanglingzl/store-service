@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Join;
@@ -48,7 +49,7 @@ public class AgencyServiceImpl implements AgencyService{
                 predicate.getExpressions()
                         .add(criteriaBuilder.like(root.get("telephone"),"%"+agency.getTelephone()+"%"));
             }
-            predicate.getExpressions().add(criteriaBuilder.equal(root.get("status"),0));
+//            predicate.getExpressions().add(criteriaBuilder.equal(root.get("status"),0));
             return predicate;
         });
         return getAgenciesDto(agencise);
@@ -66,12 +67,12 @@ public class AgencyServiceImpl implements AgencyService{
                 predicate.getExpressions()
                         .add(criteriaBuilder.like(root.get("telephone"),"%"+agency.getTelephone()+"%"));
             }
-            predicate.getExpressions().add(criteriaBuilder.equal(root.get("status"),status));
-            Join<Agency, Answer> answerJoin = root.join("answers");
-            predicate.getExpressions().add(criteriaBuilder.equal(answerJoin.get("status"),0));
+//            predicate.getExpressions().add(criteriaBuilder.equal(root.get("status"),status));
+//            Join<Agency, Answer> answerJoin = root.join("answers");
+//            predicate.getExpressions().add(criteriaBuilder.equal(answerJoin.get("status"),0));
             return predicate;
         });
-        return converQuasiAgency(quasiAgencies);
+        return convertQuasiAgency(quasiAgencies);
     }
 
     /**
@@ -81,12 +82,17 @@ public class AgencyServiceImpl implements AgencyService{
      */
     private List<AgencyDto> getAgenciesDto(List<Agency> agencise){
         List<AgencyDto> agenciesDto = Lists.newArrayList();
-        List<Agency> parentList = agencise.stream().filter(item -> item.getParentId() == 0)
+        List<Agency> parentList = agencise.stream().filter(item -> item.getParentId() == null)
                 .collect(Collectors.toList());
         if(parentList.size()<=0){
             parentList = agencise;
         }
-        parentList.forEach(parent -> agenciesDto.add(convertAgency(agencise, parent)));
+        parentList.forEach(parent -> {
+            if(parent.getParentId() == null){
+                parent.setParentId(0L);
+            }
+            agenciesDto.add(convertAgency(agencise, parent));
+        });
         return agenciesDto;
     }
 
@@ -116,7 +122,7 @@ public class AgencyServiceImpl implements AgencyService{
         return agencise.stream().filter(item -> item.getParentId().equals(id)).collect(Collectors.toList());
     }
 
-    private List<AgencyDto> converQuasiAgency(List<Agency> quasiAgencies){
+    private List<AgencyDto> convertQuasiAgency(List<Agency> quasiAgencies){
         List<AgencyDto> list = Lists.newArrayList();
         quasiAgencies.forEach(item->{
             AgencyDto dto = new AgencyDto();
@@ -247,6 +253,11 @@ public class AgencyServiceImpl implements AgencyService{
         }
         this.agencyRepository.save(agency);
 
+    }
+
+    @Override
+    public void agencyUpgrade(Long id, Integer level) {
+        agencyRepository.agencyUpgradeById(level, id);
     }
 
     private void getChildAgencyHql(Root<Agency> root, CriteriaBuilder criteriaBuilder,

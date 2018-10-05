@@ -77,4 +77,9 @@ public class AgencyController {
         return RestResponse.success();
     }
 
+    @PostMapping("/agency/upgrade")
+    public RestResponse agencyUpgrade(@RequestParam("id") Long id, @RequestParam("level") Integer level){
+        agencyService.agencyUpgrade(id, level);
+        return RestResponse.success();
+    }
 }

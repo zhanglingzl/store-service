@@ -28,4 +28,15 @@ public interface AgencyRepository extends BaseRepository<Agency, Long>{
 
     Agency findAgenciesById(Long id);
 
+    /**
+     * 通过ID跟新代理登录
+     * @param id Id
+     * @param level 代理等级
+     * @return int
+     */
+    @Transactional
+    @Modifying
+    @Query("update Agency set level=?1 where id=?2")
+    int agencyUpgradeById(Integer level, Long id);
+
 }

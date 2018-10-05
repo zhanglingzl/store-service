@@ -31,5 +31,7 @@ public class AgencyDto {
     private List<AgencyDto> children = Lists.newArrayList();
     private AgencyDto parent;
     private Answer answer;
+    private String wechat;
+    private String likeName;
 
 }
