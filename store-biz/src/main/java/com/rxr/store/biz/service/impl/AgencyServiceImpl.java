@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Join;
@@ -38,21 +39,35 @@ public class AgencyServiceImpl implements AgencyService{
     private AgencyRepository agencyRepository;
 
     @Override
-    public List<AgencyDto> getAgencise(AgencyForm agency) {
+    public List<Agency> getAgencise(AgencyForm agencyForm) {
         List<Agency> agencise = agencyRepository.findAll((root, query, criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.conjunction();
-            if(StringUtils.isNotBlank(agency.getName())) {
+            if(StringUtils.isNotBlank(agencyForm.getName())) {
                 predicate.getExpressions()
-                        .add(criteriaBuilder.like(root.get("name"),"%"+agency.getName()+"%"));
+                        .add(criteriaBuilder.like(root.get("name"),"%" + agencyForm.getName()+"%"));
             }
-            if(StringUtils.isNotBlank(agency.getTelephone())) {
+            if(StringUtils.isNotBlank(agencyForm.getTelephone())) {
                 predicate.getExpressions()
-                        .add(criteriaBuilder.like(root.get("telephone"),"%"+agency.getTelephone()+"%"));
+                        .add(criteriaBuilder.like(root.get("telephone"),"%" + agencyForm.getTelephone()+"%"));
             }
-//            predicate.getExpressions().add(criteriaBuilder.equal(root.get("status"),0));
+            if(StringUtils.isBlank(agencyForm.getName()) && StringUtils.isBlank(agencyForm.getTelephone())){
+                predicate.getExpressions().add(criteriaBuilder.isNull(root.get("parentId")));
+            }
             return predicate;
         });
-        return getAgenciesDto(agencise);
+        Map<Long, List<Agency>> childrenMap = agencyRepository.findAll().stream()
+                .filter(agency -> agency.getParentId() != null)
+                .collect(Collectors.groupingBy(Agency::getParentId));
+        agencise.forEach(agency -> getChildren(agency, childrenMap));
+        return agencise;
+    }
+
+    private void getChildren(Agency agency, Map<Long, List<Agency>> childrenMap){
+        List<Agency> children = childrenMap.get(agency.getId());
+        agency.setChildren(children);
+        if(!CollectionUtils.isEmpty(children)){
+            children.forEach(child -> getChildren(child, childrenMap));
+        }
     }
 
     @Override

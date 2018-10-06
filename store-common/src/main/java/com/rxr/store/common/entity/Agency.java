@@ -60,6 +60,8 @@ public class Agency extends BaseEntity{
     @Transient
     private String token;
 
+    @Transient
+    private List<Agency> children;
 
 
 }

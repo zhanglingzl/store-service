@@ -21,7 +21,7 @@ public interface AgencyService {
      * @param agencyForm
      * @return
      */
-    List<AgencyDto> getAgencise(AgencyForm agencyForm);
+    List<Agency> getAgencise(AgencyForm agencyForm);
 
     /**
      * 获取准代理信息

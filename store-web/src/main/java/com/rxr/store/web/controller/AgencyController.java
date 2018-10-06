@@ -26,7 +26,7 @@ public class AgencyController {
     private AgencyService agencyService;
 
     @GetMapping("/agency")
-    public RestResponse<List<AgencyDto>> getAgencies(AgencyForm agencyForm){
+    public RestResponse<List<Agency>> getAgencies(AgencyForm agencyForm){
         return RestResponse.success(agencyService.getAgencise(agencyForm));
     }
 
