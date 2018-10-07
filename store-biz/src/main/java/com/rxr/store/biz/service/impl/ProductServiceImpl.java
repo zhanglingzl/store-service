@@ -167,6 +167,12 @@ public class ProductServiceImpl implements ProductService{
         }
     }
 
+    @Override
+    public boolean existProductNo(String productNo) {
+        Product product = repository.findByProductNo(productNo);
+        return null != product;
+    }
+
     /**
      * 将封面及图片中的$$替换为空
      *  <pre>名称中包含$$为已经上传的文件</pre>

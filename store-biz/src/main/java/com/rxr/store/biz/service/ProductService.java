@@ -52,4 +52,11 @@ public interface ProductService {
      * @param uid 图片唯一编码
      */
     void saveProductImage(MultipartFile file, String uid);
+
+    /**
+     * 判断商品编号是否存在
+     * @param productNo 商品编号
+     * @return Boolean
+     */
+    boolean existProductNo(String productNo);
 }

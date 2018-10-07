@@ -51,7 +51,7 @@ public class AgencyServiceImpl implements AgencyService{
                         .add(criteriaBuilder.like(root.get("telephone"),"%" + agencyForm.getTelephone()+"%"));
             }
             if(StringUtils.isBlank(agencyForm.getName()) && StringUtils.isBlank(agencyForm.getTelephone())){
-                predicate.getExpressions().add(criteriaBuilder.isNull(root.get("parentId")));
+                predicate.getExpressions().add(criteriaBuilder.equal(root.get("parentId"), 10000));
             }
             return predicate;
         });

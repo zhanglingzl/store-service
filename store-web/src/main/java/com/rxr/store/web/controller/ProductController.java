@@ -56,4 +56,9 @@ public class ProductController {
         return RestResponse.success();
     }
 
+    @GetMapping("product/exist/no")
+    public RestResponse existProductNo(@RequestParam("productNo") String productNo){
+        return RestResponse.success(productService.existProductNo(productNo));
+    }
+
 }
