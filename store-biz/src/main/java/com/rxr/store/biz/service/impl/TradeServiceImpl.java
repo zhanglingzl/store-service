@@ -9,6 +9,7 @@ import com.rxr.store.common.entity.Trade;
 import com.rxr.store.common.form.TradeForm;
 import com.rxr.store.common.util.DateHelper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,8 +130,47 @@ public class TradeServiceImpl implements TradeService {
     public List<Trade> findAllTrades(TradeForm tradeForm) {
         return this.tradeRepository.findAll((root, query, criteriaBuilder) -> {
             Predicate predicate = criteriaBuilder.conjunction();
+
+            if (StringUtils.isNotBlank(tradeForm.getTradeNo()) && !"null".equals(tradeForm.getTradeNo())) {
+               predicate.getExpressions().add(criteriaBuilder.like(root.get("tradeNo"),"%"+tradeForm.getTradeNo()+"%"));
+            }
+            if(tradeForm.getBetweenDate() != null && tradeForm.getBetweenDate().length == 2) {
+                predicate.getExpressions().add(criteriaBuilder.between(root.get("createTime"),
+                        DateHelper.format(tradeForm.getBetweenDate()[0],"yyyy-MM-dd HH:mm:ss"),
+                        DateHelper.format(tradeForm.getBetweenDate()[1],"yyyy-MM-dd HH:mm:ss")));
+            }
+            if(StringUtils.isNotBlank(tradeForm.getTelephone()) && !"null".equals(tradeForm.getTelephone())) {
+                predicate.getExpressions().add(criteriaBuilder.like(root.get("phone"), "%"+tradeForm.getTelephone()+"%"));
+            }
+
+            if(StringUtils.isNotBlank(tradeForm.getAddress()) && !"null".equals(tradeForm.getAddress())) {
+                predicate.getExpressions().add(criteriaBuilder.like(
+                        criteriaBuilder.concat(criteriaBuilder.concat(criteriaBuilder.concat(root.get("province"),root.get("city"))
+                                ,root.get("country")), root.get("address")),"%"+tradeForm.getAddress()+"%"));
+            }
+            if(StringUtils.isNotBlank(tradeForm.getTrackingNo()) && !"null".equals(tradeForm.getTrackingNo())) {
+                predicate.getExpressions().add(criteriaBuilder.equal(root.get("trackingNo"),tradeForm.getTrackingNo()));
+            }
+            if(tradeForm.getShipStatus() != null) {
+                predicate.getExpressions().add(criteriaBuilder.equal(root.get("shipStatus"), tradeForm.getShipStatus()));
+            }
+            Join<Trade, Agency> agencyJoin = root.join("agency");
+            if(StringUtils.isNotBlank(tradeForm.getAgencyName()) && !"null".equals(tradeForm.getAgencyName())) {
+                predicate.getExpressions().add(criteriaBuilder.like(agencyJoin.get("name"),"%"+tradeForm.getAgencyName() +"%"));
+            }
+            System.out.println(tradeForm.getAgencyId());
+            if(StringUtils.isNotBlank(tradeForm.getAgencyId()) && !"null".equals(tradeForm.getAgencyId())) {
+                predicate.getExpressions().add(criteriaBuilder.equal(agencyJoin.get("id"), tradeForm.getAgencyId()));
+            }
             query.orderBy(criteriaBuilder.desc(root.get("createTime")));
             return predicate;
         });
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateShipping(TradeForm tradeForm) {
+        this.tradeRepository.updateShipping(tradeForm.getTrade().getTrackingName(), tradeForm.getTrade().getTrackingNo(),
+                1, tradeForm.getTrade().getTradeNo());
     }
 }
