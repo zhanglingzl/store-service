@@ -62,6 +62,13 @@ public class WechatController {
         return RestResponse.success(wechatJSPay);
     }
 
+    @GetMapping("/pendingPay")
+    public RestResponse<WechatJSPay> pendingPay(@RequestParam("tradeNo") String tradeNo) {
+        WechatJSPay wechatJSPay = this.wechatAuthService.pendingPay(tradeNo);
+        log.info(wechatJSPay.toString());
+        return RestResponse.success(wechatJSPay);
+    }
+
     @PostMapping("notify_url")
     public void payNotify(HttpServletRequest request, HttpServletResponse response) {
         SAXReader reader = new SAXReader();

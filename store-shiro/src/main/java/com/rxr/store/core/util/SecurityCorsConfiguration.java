@@ -23,6 +23,7 @@ public class SecurityCorsConfiguration {
         urls.add("http://localhost:4200");
         urls.add("http://localhost:4100");
         urls.add("http://wechat.greenleague.xin");
+        urls.add("http://admin.greenleague.xin");
         config.setAllowedOrigins(urls);
         config.addAllowedHeader(CorsConfiguration.ALL);
         config.addAllowedMethod(CorsConfiguration.ALL);

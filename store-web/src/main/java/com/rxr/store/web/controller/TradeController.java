@@ -7,22 +7,23 @@ import com.rxr.store.common.entity.Agency;
 import com.rxr.store.common.entity.Trade;
 import com.rxr.store.common.form.TradeForm;
 import com.rxr.store.web.common.dto.RestResponse;
+import com.rxr.store.wechat.service.WechatAuthService;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 public class TradeController {
     private final TradeService tradeService;
+    private final WechatAuthService wechatAuthService;
 
     @Autowired
-    public TradeController(TradeService tradeService) {
+    public TradeController(TradeService tradeService, WechatAuthService wechatAuthService) {
         this.tradeService = tradeService;
+        this.wechatAuthService = wechatAuthService;
     }
 
     @GetMapping("/trade/list")
@@ -51,5 +52,12 @@ public class TradeController {
     public RestResponse<List<Trade>> findAllTrades(TradeForm tradeForm) {
         List<Trade> trades = this.tradeService.findAllTrades(tradeForm);
         return RestResponse.success(trades);
+    }
+
+    @PutMapping("/trade/updateShipping")
+    public RestResponse<String> updateShipping(@RequestBody TradeForm tradeForm) {
+        this.tradeService.updateShipping(tradeForm);
+        //this.wechatAuthService.sendShippingMessage(tradeForm);
+        return RestResponse.success();
     }
 }

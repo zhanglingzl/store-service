@@ -26,4 +26,6 @@ public interface TradeService {
     Double getTotalAmount(Agency agency);
 
     List<Trade> findAllTrades(TradeForm tradeForm);
+
+    void updateShipping(TradeForm tradeForm);
 }

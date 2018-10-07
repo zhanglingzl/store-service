@@ -2,6 +2,7 @@ package com.rxr.store.wechat.service;
 
 import com.rxr.store.common.dto.WechatJSPay;
 import com.rxr.store.common.entity.Trade;
+import com.rxr.store.common.form.TradeForm;
 import com.rxr.store.wechat.model.WechatConfig;
 import com.rxr.store.common.entity.Agency;
 import com.rxr.store.wechat.model.Message;
@@ -52,4 +53,8 @@ public interface WechatAuthService {
     void savePayByWechatNotify(Document document);
 
     void setAgencyLevel(Agency agency);
+
+    WechatJSPay pendingPay(String tradeNo);
+
+    void sendShippingMessage(TradeForm tradeForm);
 }

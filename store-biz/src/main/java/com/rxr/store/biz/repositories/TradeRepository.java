@@ -28,4 +28,10 @@ public interface TradeRepository extends BaseRepository<Trade, Long> {
 
     @Query("select coalesce(sum(payableAmount), 0) from Trade where agency=:agency and payStatus=:payStates")
     Double findTradeByAgencyAndPayStatus(@Param("agency") Agency agency, @Param("payStates") Integer payStatus);
+
+    @Modifying
+    @Query("update Trade set trackingName= :trackingName, trackingNo= :trackingNo, shipStatus = :shipStatus where " +
+            "tradeNo= :tradeNo")
+    void updateShipping(@Param("trackingName") String trackingName, @Param("trackingNo") String trackingNo,
+                        @Param("shipStatus") Integer shipStatus, @Param("tradeNo") String tradeNo);
 }

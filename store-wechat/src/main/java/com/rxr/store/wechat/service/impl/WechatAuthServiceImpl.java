@@ -6,6 +6,7 @@ import com.rxr.store.biz.service.TradeService;
 import com.rxr.store.common.dto.WechatJSPay;
 import com.rxr.store.common.entity.Agency;
 import com.rxr.store.common.entity.Trade;
+import com.rxr.store.common.form.TradeForm;
 import com.rxr.store.common.util.DateHelper;
 import com.rxr.store.common.util.StringHelper;
 import com.rxr.store.common.util.XmlUtils;
@@ -365,6 +366,12 @@ public class WechatAuthServiceImpl implements WechatAuthService {
         }
     }
 
+    @Override
+    public WechatJSPay pendingPay(String tradeNo) {
+        Trade trade = this.tradeService.findTradeByTradeNo(tradeNo);
+        return this.getWechatJsPay(trade);
+    }
+
     private void findAgencyByWechat(String accessToken, Agency agency) throws Exception {
         String url = AuthUtil.AUTH_USER_INFO_URL.replace("ACCESS_TOKEN", accessToken)
                 .replace("OPENID", agency.getWechatId());
@@ -376,5 +383,25 @@ public class WechatAuthServiceImpl implements WechatAuthService {
         agency.setLikeName(node.get("nickname").asText());
     }
 
-
+    @Override
+    public void sendShippingMessage(TradeForm tradeForm) {
+        try {
+            initAccessToken();
+            String url = AuthUtil.MESSAGE_SEND_URL.replace("ACCESS_TOKEN", token.getAccessToken());
+            HttpHeaders headers = new HttpHeaders();
+            MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
+            headers.setContentType(type);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("touser", tradeForm.getAgency().getWechatId());
+            jsonObject.put("template_id", AuthUtil.MESSAGE_TEMPLATE_ID);
+            Map<Object, Object> data = ImmutableMap.builder()
+                    .build();
+            jsonObject.put("data", data);
+            HttpEntity<String> entity = new HttpEntity<>(jsonObject.toString(),headers);
+            String message = restTemplate.postForObject(url, entity, String.class);
+            log.info(message);
+        } catch (Exception e) {
+            log.error("发送物流信息错误", e);
+        }
+    }
 }
