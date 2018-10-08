@@ -42,9 +42,10 @@ public interface ProductService {
 
     /**
      * 根据商品ID删除商品
-     * @param id 商品ID
+     *  <pre>逻辑删除</pre>
+     * @param product 商品
      */
-    void deleteProductById(Long id);
+    void deleteProductById(Product product);
 
     /**
      * 保存商品封面及图片

@@ -78,4 +78,10 @@ public class Product extends BaseEntity{
     @Transient
     private String imageUrl;
 
+    /**
+     * 删除状态 0:为删除 1：删除
+     */
+    @Column(name="product_delete_status")
+    private Integer deleteStatus = 0;
+
 }

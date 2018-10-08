@@ -50,9 +50,9 @@ public class ProductController {
         return RestResponse.success(product);
     }
 
-    @DeleteMapping("/product/delete")
-    public RestResponse deleteProductById(Long id){
-        productService.deleteProductById(id);
+    @PostMapping("/product/delete")
+    public RestResponse deleteProductById(@RequestBody Product product){
+        productService.deleteProductById(product);
         return RestResponse.success();
     }
 

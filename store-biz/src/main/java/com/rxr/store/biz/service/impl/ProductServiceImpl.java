@@ -66,6 +66,7 @@ public class ProductServiceImpl implements ProductService{
             if(StringUtils.isNotBlank(productForm.getProductName())){
                 predicate.getExpressions().add(criteriaBuilder.like(root.get("productName"), "%" + productForm.getProductName() + "%"));
             }
+            predicate.getExpressions().add(criteriaBuilder.equal(root.get("deleteStatus"), 0));
             return predicate;
         });
         productList.forEach(product -> product.setImageUrl(imageUrl));
@@ -154,8 +155,9 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public void deleteProductById(Long id) {
-        this.repository.deleteById(id);
+    public void deleteProductById(Product product) {
+        product.setDeleteStatus(1);
+        this.repository.save(product);
     }
 
     @Override
