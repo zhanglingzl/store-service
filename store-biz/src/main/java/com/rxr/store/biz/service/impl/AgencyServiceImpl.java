@@ -50,15 +50,13 @@ public class AgencyServiceImpl implements AgencyService{
                 predicate.getExpressions()
                         .add(criteriaBuilder.like(root.get("telephone"),"%" + agencyForm.getTelephone()+"%"));
             }
-            if(StringUtils.isBlank(agencyForm.getName()) && StringUtils.isBlank(agencyForm.getTelephone())){
-                predicate.getExpressions().add(criteriaBuilder.equal(root.get("parentId"), 10000));
-            }
+            predicate.getExpressions().add(criteriaBuilder.notEqual(root.get("id"), 10000));
             return predicate;
         });
-        Map<Long, List<Agency>> childrenMap = agencyRepository.findAll().stream()
+       /* Map<Long, List<Agency>> childrenMap = agencyRepository.findAll().stream()
                 .filter(agency -> agency.getParentId() != null)
                 .collect(Collectors.groupingBy(Agency::getParentId));
-        agencise.forEach(agency -> getChildren(agency, childrenMap));
+        agencise.forEach(agency -> getChildren(agency, childrenMap));*/
         return agencise;
     }
 
@@ -72,21 +70,7 @@ public class AgencyServiceImpl implements AgencyService{
 
     @Override
     public List<AgencyDto> getQuasiAgencies(AgencyForm agency, int status) {
-        List<Agency> quasiAgencies = agencyRepository.findAll((root, query, criteriaBuilder) -> {
-            Predicate predicate = criteriaBuilder.conjunction();
-            if(StringUtils.isNotBlank(agency.getName())) {
-                predicate.getExpressions()
-                        .add(criteriaBuilder.like(root.get("name"),"%"+agency.getName()+"%"));
-            }
-            if(StringUtils.isNotBlank(agency.getTelephone())) {
-                predicate.getExpressions()
-                        .add(criteriaBuilder.like(root.get("telephone"),"%"+agency.getTelephone()+"%"));
-            }
-//            predicate.getExpressions().add(criteriaBuilder.equal(root.get("status"),status));
-//            Join<Agency, Answer> answerJoin = root.join("answers");
-//            predicate.getExpressions().add(criteriaBuilder.equal(answerJoin.get("status"),0));
-            return predicate;
-        });
+        List<Agency> quasiAgencies = null;
         return convertQuasiAgency(quasiAgencies);
     }
 
@@ -142,10 +126,6 @@ public class AgencyServiceImpl implements AgencyService{
         quasiAgencies.forEach(item->{
             AgencyDto dto = new AgencyDto();
             BeanUtils.copyProperties(item, dto);
-            Answer answer = item.getAnswers().get(0);
-            // 消除Json转化递归内存溢出错误
-            answer.setAgency(null);
-            dto.setAnswer(answer);
             list.add(dto);
         });
         return list;
@@ -168,7 +148,6 @@ public class AgencyServiceImpl implements AgencyService{
         if(level < AgencyEnum.MAX_LEVEL.getValue()){
             agency.setLevel(level + 1);
             agencyRepository.save(agency);
-            agencyRepository.updateAnswerStatusById(AgencyEnum.ANSWER_VERIFY.getValue(), agency.getAnswers().get(0).getId());
         }
     }
 
@@ -273,6 +252,11 @@ public class AgencyServiceImpl implements AgencyService{
     @Override
     public void agencyUpgrade(Long id, Integer level) {
         agencyRepository.agencyUpgradeById(level, id);
+    }
+
+    @Override
+    public void changeParent(Long id, Long parentId) {
+        agencyRepository.changeParent(parentId, id);
     }
 
     private void getChildAgencyHql(Root<Agency> root, CriteriaBuilder criteriaBuilder,

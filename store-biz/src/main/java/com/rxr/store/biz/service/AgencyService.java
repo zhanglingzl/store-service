@@ -59,4 +59,12 @@ public interface AgencyService {
      * @param level 代理等级
      */
     void agencyUpgrade(Long id, Integer level);
+
+    /**
+     * 变更父级
+     *
+     * @param id 代理ID
+     * @param parentId 代理等级
+     */
+    void changeParent(Long id, Long parentId);
 }

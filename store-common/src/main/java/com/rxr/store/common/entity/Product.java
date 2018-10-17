@@ -63,11 +63,6 @@ public class Product extends BaseEntity{
      */
     @Column(name="product_images")
     private String images;
-    @ManyToMany
-    @JoinTable(name = "agency_level_product",
-               joinColumns = {@JoinColumn(name = "product_id")},
-               inverseJoinColumns = {@JoinColumn(name = "alp_id")})
-    private List<AgencyLevelProduct> agencyLevelProducts;
 
     @OneToMany(mappedBy = "product", fetch=FetchType.EAGER)
     private List<ProductQrCode> productQrCodes;
@@ -83,5 +78,8 @@ public class Product extends BaseEntity{
      */
     @Column(name="product_delete_status")
     private Integer deleteStatus = 0;
+
+    /*@OneToMany(mappedBy = "product", fetch=FetchType.EAGER)
+    private List<ProductRepertory> productRepertories;*/
 
 }

@@ -39,4 +39,15 @@ public interface AgencyRepository extends BaseRepository<Agency, Long>{
     @Query("update Agency set level=?1 where id=?2")
     int agencyUpgradeById(Integer level, Long id);
 
+    /**
+     * 通过ID跟新父节点
+     * @param id Id
+     * @param parentId 父级Id
+     * @return int
+     */
+    @Transactional
+    @Modifying
+    @Query("update Agency set parentId=?1 where id=?2")
+    int changeParent(Long parentId, Long id);
+
 }

@@ -82,4 +82,10 @@ public class AgencyController {
         agencyService.agencyUpgrade(id, level);
         return RestResponse.success();
     }
+
+    @PostMapping("/agency/change")
+    public RestResponse changeParent(@RequestParam("id") Long id, @RequestParam("parentId") Long parentId){
+        agencyService.changeParent(id, parentId);
+        return RestResponse.success();
+    }
 }

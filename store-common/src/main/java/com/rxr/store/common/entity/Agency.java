@@ -34,8 +34,8 @@ public class Agency extends BaseEntity{
     @Column(name = "ag_pid")
     private Long parentId;
     /**
-     * 代理等级，0：普通会员 1：琥珀,2:蜜蜡,
-     * 3:欧珀,4:红宝,5:翡翠,6:钻石
+     * 代理等级，0：普通会员 1：琥珀,2:水晶,
+     * 3:欧珀,4:红宝石,5:翡翠,6:钻石
      */
     @Column(name = "ag_level")
     private Integer level;
@@ -54,9 +54,6 @@ public class Agency extends BaseEntity{
     /**微信二维码ticket过期时间*/
     @Column(name="ag_ticket_expire")
     private Date ticketExpire;
-
-    @OneToMany(mappedBy = "agency", fetch=FetchType.EAGER)
-    private List<Answer> answers;
     @Transient
     private String token;
 
