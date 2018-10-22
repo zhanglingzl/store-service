@@ -1,6 +1,7 @@
 package com.rxr.store.biz.service;
 
 import com.rxr.store.common.dto.PageParams;
+import com.rxr.store.common.dto.TransactionStatisticsDTO;
 import com.rxr.store.common.entity.Agency;
 import com.rxr.store.common.entity.Trade;
 import com.rxr.store.common.form.TradeForm;
@@ -28,4 +29,6 @@ public interface TradeService {
     List<Trade> findAllTrades(TradeForm tradeForm);
 
     void updateShipping(TradeForm tradeForm);
+
+    TransactionStatisticsDTO findTransactionStatistics();
 }

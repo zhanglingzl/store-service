@@ -4,6 +4,7 @@ import com.rxr.store.biz.repositories.TradeRepository;
 import com.rxr.store.biz.service.AgencyService;
 import com.rxr.store.biz.service.TradeService;
 import com.rxr.store.common.dto.PageParams;
+import com.rxr.store.common.dto.TransactionStatisticsDTO;
 import com.rxr.store.common.entity.Agency;
 import com.rxr.store.common.entity.Trade;
 import com.rxr.store.common.form.TradeForm;
@@ -115,7 +116,7 @@ public class TradeServiceImpl implements TradeService {
         log.info(DateHelper.format(before,"yyyy-MM-dd HH:mm:ss"));
         List<Trade> expireTimeTrades = tradeRepository.findAllByPayStatusAndCreateTimeBefore(0, before);
         expireTimeTrades.forEach(trade -> {
-            log.info("超过时间没有支付的订单: {}" + trade.toString());
+            log.info("超过时间没有支付的订单: {}", trade.toString());
             this.tradeRepository.delete(trade);
 
         });
@@ -151,14 +152,13 @@ public class TradeServiceImpl implements TradeService {
             if(StringUtils.isNotBlank(tradeForm.getTrackingNo()) && !"null".equals(tradeForm.getTrackingNo())) {
                 predicate.getExpressions().add(criteriaBuilder.equal(root.get("trackingNo"),tradeForm.getTrackingNo()));
             }
-            if(tradeForm.getShipStatus() != null) {
+            if(StringUtils.isNotBlank(tradeForm.getShipStatus()) && !"null".equals(tradeForm.getShipStatus())) {
                 predicate.getExpressions().add(criteriaBuilder.equal(root.get("shipStatus"), tradeForm.getShipStatus()));
             }
             Join<Trade, Agency> agencyJoin = root.join("agency");
             if(StringUtils.isNotBlank(tradeForm.getAgencyName()) && !"null".equals(tradeForm.getAgencyName())) {
                 predicate.getExpressions().add(criteriaBuilder.like(agencyJoin.get("name"),"%"+tradeForm.getAgencyName() +"%"));
             }
-            System.out.println(tradeForm.getAgencyId());
             if(StringUtils.isNotBlank(tradeForm.getAgencyId()) && !"null".equals(tradeForm.getAgencyId())) {
                 predicate.getExpressions().add(criteriaBuilder.equal(agencyJoin.get("id"), tradeForm.getAgencyId()));
             }
@@ -172,5 +172,21 @@ public class TradeServiceImpl implements TradeService {
     public void updateShipping(TradeForm tradeForm) {
         this.tradeRepository.updateShipping(tradeForm.getTrade().getTrackingName(), tradeForm.getTrade().getTrackingNo(),
                 1, tradeForm.getTrade().getTradeNo());
+    }
+
+    @Override
+    public TransactionStatisticsDTO findTransactionStatistics() {
+        Date end = DateHelper.format(DateHelper
+                .format(new Date(), "yyyy-MM-dd 23:59:59"),"yyyy-MM-dd HH:mm:ss");
+        Date before = DateHelper.minusMonths(end, 1);
+        TransactionStatisticsDTO statisticsDTO = new TransactionStatisticsDTO();
+        Map<String ,Object> totalTrade = this.tradeRepository.findTradeByPayStatus(1);
+        statisticsDTO.setTotalAmount((BigDecimal) totalTrade.get("amount"));
+        statisticsDTO.setTotalCount((Long) totalTrade.get("totalCount"));
+        List<Trade> tradeList = this.tradeRepository.findAllByPayStatusAndCreateTimeBetween(1, before, end);
+        Map<String, List<Trade>> tradeMap = tradeList.stream().collect(Collectors.groupingBy((Trade trade) -> DateHelper
+                        .format(trade.getCreateTime(),"yyyy-MM-dd")));
+        Map<String, TransactionStatisticsDTO> statisticsDTOMap = new LinkedHashMap<>();
+        return null;
     }
 }

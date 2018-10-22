@@ -63,4 +63,6 @@ public class Trade extends BaseEntity {
     private String trackingNo;
     /**物流公司*/
     private String trackingName;
+    /**物流费用*/
+    private BigDecimal trackingAmount;
 }

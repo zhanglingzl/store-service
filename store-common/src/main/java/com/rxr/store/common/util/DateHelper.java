@@ -109,7 +109,11 @@ public class DateHelper {
      * @return 判断该时间是否小于当前时间
      */
     public static boolean isBefore(Date date) {
-        return dateToLocalDateTime(date).isBefore(LocalDateTime.now(Clock.systemUTC()));
+        return dateToLocalDateTime(date).isBefore(LocalDateTime.now());
+    }
+
+    public static boolean isBefore(Date before, Date end) {
+        return dateToLocalDateTime(before).isBefore(dateToLocalDateTime(end));
     }
 
     public static String serialDateCode() {
@@ -175,7 +179,8 @@ public class DateHelper {
     }
         public static void main(String[] args) {
         Date date = new Date();
-        Date date1 = getFirstDayofMounth(date);
+        Date date1 = minusMinutes(date, 5);
+            System.out.println(DateHelper.isBefore(date1));
         System.out.println(format(date1,"yyyy-MM-dd HH:mm:ss"));
         Date date2 = getLastDayofMounth();
         Date date3 = minusMinutes(date, 30);

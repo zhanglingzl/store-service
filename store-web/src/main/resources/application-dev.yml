@@ -15,11 +15,17 @@ spring:
           log-slow-sql: true
           slow-sql-millis: 5000
           merge-sql: true
-#server:
-#  port: 8443
-#  ssl:
-#    key-store: store.jks
-#    key-password: 1528634975109
-#    key-store-type: JKS
+  aop:
+    auto: true
+    proxy-target-class: true
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false
+
+store:
+  imagePath: /var/www/images.greenleague.xin/images/storeImages/
+  imageTempPath: /var/www/images.greenleague.xin/images/storeTemp/
+  imageUrl: http://images.greenleague.xin/storeImages/
 
 

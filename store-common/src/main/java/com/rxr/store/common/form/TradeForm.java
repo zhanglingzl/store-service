@@ -18,7 +18,7 @@ public class TradeForm {
     private String agencyId;
     private String tradeNo;
     private String[] betweenDate;
-    private Integer shipStatus;
+    private String shipStatus;
     private String telephone;
     private String address;
     private String trackingNo;

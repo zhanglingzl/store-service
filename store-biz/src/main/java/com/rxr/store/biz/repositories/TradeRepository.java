@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import javax.xml.crypto.Data;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public interface TradeRepository extends BaseRepository<Trade, Long> {
     @Modifying
@@ -34,4 +35,9 @@ public interface TradeRepository extends BaseRepository<Trade, Long> {
             "tradeNo= :tradeNo")
     void updateShipping(@Param("trackingName") String trackingName, @Param("trackingNo") String trackingNo,
                         @Param("shipStatus") Integer shipStatus, @Param("tradeNo") String tradeNo);
+
+    @Query("select coalesce(sum(payableAmount), 0) as amount, count(id) as totalCount from Trade where payStatus= :payStatus")
+    Map<String, Object> findTradeByPayStatus(@Param("payStatus") Integer payStatus);
+
+    List<Trade> findAllByPayStatusAndCreateTimeBetween(Integer payStatus, Date before, Date end);
 }

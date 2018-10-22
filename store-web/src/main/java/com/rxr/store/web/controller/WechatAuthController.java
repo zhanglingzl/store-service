@@ -9,6 +9,7 @@ import com.rxr.store.core.util.JWTHelper;
 import com.rxr.store.web.common.dto.RestResponse;
 import com.rxr.store.wechat.model.Message;
 import com.rxr.store.wechat.model.WechatAuth;
+import com.rxr.store.wechat.model.WechatConfig;
 import com.rxr.store.wechat.model.menu.Menu;
 import com.rxr.store.wechat.service.WechatAuthService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +25,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.Console;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -123,18 +128,20 @@ public class WechatAuthController {
                             //@RequestParam("redirect_uri") String redirectUri,
                             String code)
             throws Exception{
-        String redirectUri = "http://wechat.greenleague.xin/callback/wechat-code";
+        String redirectUri = "http://localhost:4000/callback/wechat-code";
         //System.out.println(code);
-        response.sendRedirect(redirectUri+"/?code="+code);
+        response.sendRedirect(redirectUri+"/?code="+"");
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public RestResponse login(@RequestParam("code") String code) {
+
         Subject subject = SecurityUtils.getSubject();
         if(!subject.isAuthenticated()) {
             Agency agency = wechatAuthService.findAgencyByCode(code);
             //Agency agency = wechatAuthService.findAgencyByWechatId("oArUD1huOrlocCNmH4UgheHEBIgc");
             if(agency == null) {
+                log.error(code);
                 throw new RuntimeException("未找到agency");
             }
             if(agency.getLevel() == 0) {
@@ -151,5 +158,45 @@ public class WechatAuthController {
         System.out.println(serialNo);
     }
 
+    @RequestMapping(value = "/qr-code",method = RequestMethod.GET)
+    public RestResponse<Agency> qrCode(@RequestParam("id") Long id) {
+        Agency agency = wechatAuthService.findQrCodeTicket(id);
+        return RestResponse.success(agency);
+    }
 
+    @GetMapping("/config")
+    public RestResponse<WechatConfig> getWechatConfig(HttpServletRequest request,
+                                                      @RequestParam(value = "url",required = false) String url) {
+        log.info(request.getHeader("Referer"));
+        if(StringUtils.isBlank(url)) {
+            url = request.getHeader("Referer");
+        }
+        WechatConfig wechatConfig = null;
+        try {
+            wechatConfig = wechatAuthService.getWechatConfig(URLDecoder.decode(url,"UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return RestResponse.success(wechatConfig);
+    }
+
+    @PostMapping("/notify_url")
+    public void payNotify(HttpServletRequest request, HttpServletResponse response) {
+        SAXReader reader = new SAXReader();
+        try {
+            Document document = reader.read(request.getInputStream());
+            log.info(document.asXML());
+            this.wechatAuthService.savePayByWechatNotify(document);
+            Map<String, String> map = new HashMap<>();
+            map.put("return_code","SUCCESS");
+            map.put("return_msg", "OK");
+            String xml = XmlUtils.getXml(map);
+            log.info(xml);
+            response.getWriter().write(xml);
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

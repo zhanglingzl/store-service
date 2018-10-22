@@ -22,8 +22,11 @@ public class SecurityCorsConfiguration {
         List<String> urls = new ArrayList<>();
         urls.add("http://localhost:4200");
         urls.add("http://localhost:4100");
+        urls.add("http://localhost:4000");
         urls.add("http://wechat.greenleague.xin");
         urls.add("http://admin.greenleague.xin");
+        urls.add("http://www.runxier.com");
+        urls.add("http://admin.runxier.com");
         config.setAllowedOrigins(urls);
         config.addAllowedHeader(CorsConfiguration.ALL);
         config.addAllowedMethod(CorsConfiguration.ALL);

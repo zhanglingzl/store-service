@@ -18,7 +18,6 @@ public class AuthUtil {
     public static final String AUTH_USER_INFO_URL = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&" +
             "openid=OPENID&lang=zh_CN";
     public static final String QR_CODE_TICKET_URL = "https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token=TOKEN";
-    public static final String QR_CODE_URL = "https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=TICKET";
     public static final String JS_API_TICKET_URL = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=ACCESS_TOKEN&type=jsapi";
 
     public static final String TOKEN = "storeService";
@@ -27,10 +26,9 @@ public class AuthUtil {
 
 
     public static final String MCH_ID = "1505418441";
-    public static final String PAY_NOTIFY_URL = "http://service.greenleague.xin/wechat/notify_url";
+    public static final String PAY_NOTIFY_URL = "http://service.runxier.com/wechat/auth/notify_url";
     public static final String PAY_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
     public static final String PAY_KEY = "gv3RQQMwly5QjpQ646pZrOwF6eMMoyxA";
-    public static final String SANDBOX_SIGNKEY = "44d6c4239cfd73fd0328c63910b1b122";
 
     public static final String MESSAGE_TEMPLATE_ID = "2vARsqoMvQ_ZqFbF9RbUVksZgezcCLvTTopZ9NXT7yc";
     public static final String MESSAGE_SEND_URL = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=ACCESS_TOKEN";

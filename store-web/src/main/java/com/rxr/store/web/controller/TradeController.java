@@ -3,6 +3,7 @@ package com.rxr.store.web.controller;
 import com.rxr.store.biz.service.TradeService;
 import com.rxr.store.common.dto.PageData;
 import com.rxr.store.common.dto.PageParams;
+import com.rxr.store.common.dto.TransactionStatisticsDTO;
 import com.rxr.store.common.entity.Agency;
 import com.rxr.store.common.entity.Trade;
 import com.rxr.store.common.form.TradeForm;
@@ -59,5 +60,11 @@ public class TradeController {
         this.tradeService.updateShipping(tradeForm);
         //this.wechatAuthService.sendShippingMessage(tradeForm);
         return RestResponse.success();
+    }
+
+    @GetMapping("/trade/transactionStatistics")
+    public RestResponse<TransactionStatisticsDTO> findTransactionStatistics() {
+        TransactionStatisticsDTO statisticsDTO = this.tradeService.findTransactionStatistics();
+        return RestResponse.success(statisticsDTO);
     }
 }

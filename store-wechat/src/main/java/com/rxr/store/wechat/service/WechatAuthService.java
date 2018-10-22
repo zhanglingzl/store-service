@@ -24,7 +24,7 @@ public interface WechatAuthService {
 
     Agency findAgencyById(Long id);
 
-    String findQrCodeTicket(Long id);
+    Agency findQrCodeTicket(Long id);
 
     /**
      * 保存代理账户

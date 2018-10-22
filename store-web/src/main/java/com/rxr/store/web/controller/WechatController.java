@@ -9,6 +9,7 @@ import com.rxr.store.web.common.dto.RestResponse;
 import com.rxr.store.wechat.model.WechatConfig;
 import com.rxr.store.wechat.service.WechatAuthService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -22,6 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Console;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,18 +41,6 @@ public class WechatController {
         return RestResponse.success(agency);
     }
 
-    @RequestMapping(value = "/qr-code",method = RequestMethod.GET)
-    public RestResponse qrCode(@RequestParam("id") Long id) {
-        String ticket = wechatAuthService.findQrCodeTicket(id);
-        return RestResponse.success(ticket);
-    }
-
-    @GetMapping("/config")
-    public RestResponse<WechatConfig> getWechatConfig(HttpServletRequest request) {
-        log.info(request.getHeader("Referer"));
-        WechatConfig wechatConfig = wechatAuthService.getWechatConfig(request.getHeader("Referer"));
-        return RestResponse.success(wechatConfig);
-    }
 
     @PostMapping("/pay")
     public RestResponse<WechatJSPay> pay(@RequestBody Trade trade, HttpServletRequest request) {
@@ -68,27 +59,4 @@ public class WechatController {
         log.info(wechatJSPay.toString());
         return RestResponse.success(wechatJSPay);
     }
-
-    @PostMapping("notify_url")
-    public void payNotify(HttpServletRequest request, HttpServletResponse response) {
-        SAXReader reader = new SAXReader();
-        try {
-            Document document = reader.read(request.getInputStream());
-            log.info(document.asXML());
-            this.wechatAuthService.savePayByWechatNotify(document);
-            Map<String, String> map = new HashMap<>();
-            map.put("return_code","SUCCESS");
-            map.put("return_msg", "OK");
-            String xml = XmlUtils.getXml(map);
-            log.info(xml);
-            response.getWriter().write(xml);
-        } catch (DocumentException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
 }

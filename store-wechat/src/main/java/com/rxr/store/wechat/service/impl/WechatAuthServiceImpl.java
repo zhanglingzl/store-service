@@ -1,6 +1,8 @@
 package com.rxr.store.wechat.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableMap;
 import com.rxr.store.biz.service.TradeService;
 import com.rxr.store.common.dto.WechatJSPay;
@@ -37,13 +39,15 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
 public class WechatAuthServiceImpl implements WechatAuthService {
-
-    private static AccessToken token;
-    private static AccessToken jsSdkTicket;
+    //expireAfterWrite 在指定时间内没有写操作就删除
+    //expireAfterAccess 指定时间内没有读写操作
+    private final Cache<String, String> weChatCache =  CacheBuilder.newBuilder().maximumSize(100)
+            .expireAfterWrite(110, TimeUnit.MINUTES).build();
 
     private final RestTemplate restTemplate;
     private final WechatAuthRepository repository;
@@ -77,25 +81,22 @@ public class WechatAuthServiceImpl implements WechatAuthService {
     public Message createMenu(Menu menu) throws Exception {
         menu = new Menu();
         Button btn = new Button();
-        btn.setName("服务中心");
-        Button[] subButon = new Button[] {
-            new Button(Button.Type.view,"资质认证","http://wechat.greenleague.xin/introduce/certification"),
-            new Button(Button.Type.view,"公司简介","http://wechat.greenleague.xin/introduce/company-profile"),
-            new Button(Button.Type.view,"培训资料","http://wechat.greenleague.xin/introduce/train"),
-                new Button(Button.Type.view,"成为代理","http://wechat.greenleague.xin/introduce/agency"),
-            new Button(Button.Type.view,"个人中心","http://wechat.greenleague.xin/wechat/personal-center")
-
+        btn.setName("润玺尔");
+        Button[] subButon1 = new Button[] {
+            new Button(Button.Type.view,"公司简介","http://www.runxier.com/introduce/company-profile"),
+            new Button(Button.Type.view,"资质认证","http://www.runxier.com/introduce/certification"),
+            new Button(Button.Type.view,"培训资料","http://www.runxier.com/introduce/train"),
+            new Button(Button.Type.view,"成为VIP会员","http://www.runxier.com/introduce/agency")
         };
-        btn.setSubButton(subButon);
+        btn.setSubButton(subButon1);
         Button[] buttons = new Button[] {
-            new Button(Button.Type.view,"进入商城","http://wechat.greenleague.xin/wechat/home"),
-            new Button(Button.Type.view, "我的二维码", "http://wechat.greenleague.xin/wechat/qr-code"),
-                btn
+            new Button(Button.Type.view,"进入商城","http://www.runxier.com/wechat/home"),
+            new Button(Button.Type.view,"个人中心","http://www.runxier.com/wechat/personal-center"),
+            btn,
         };
         menu.setButton(buttons);
         String menuJson = JsonUtil.obj2json(menu);
-        initAccessToken();
-        String url = AuthUtil.CREATE_MENU_URL.replace("ACCESS_TOKEN", token.getAccessToken());
+        String url = AuthUtil.CREATE_MENU_URL.replace("ACCESS_TOKEN", getAccessToken());
         restTemplate.getMessageConverters().set(1, new StringHttpMessageConverter(StandardCharsets.UTF_8));
         ResponseEntity<String> result = restTemplate.postForEntity(url,menuJson, String.class);
         return JsonUtil.json2pojo(result.getBody(),Message.class);
@@ -104,18 +105,6 @@ public class WechatAuthServiceImpl implements WechatAuthService {
     @Override
     public Agency findAgencyByWechatId(String wechatId) {
         return repository.findAgencyByWechatId(wechatId);
-    }
-
-    private void initAccessToken() throws Exception {
-        String url = AuthUtil.ACCESS_TOKEN_URL.replace("APPID", AuthUtil.APP_ID)
-                .replace("APPSECRET", AuthUtil.APP_SECRET);
-
-        if(token == null || DateHelper.isBefore(token.getExpiresDate())) {
-            ResponseEntity<String> result = restTemplate.getForEntity(url, String.class);
-            token = JsonUtil.json2pojo(result.getBody(),AccessToken.class);
-            token.setExpiresDate(DateHelper.plusSecond(token.getExpiresIn()));
-        }
-
     }
 
     @Override
@@ -151,14 +140,13 @@ public class WechatAuthServiceImpl implements WechatAuthService {
     }
 
     @Override
-    public String findQrCodeTicket(Long id) {
+    public Agency findQrCodeTicket(Long id) {
         try {
             Agency agency = this.findAgencyById(id);
             if(StringUtils.isBlank(agency.getTicket())
                     || agency.getTicketExpire() == null
                     || DateHelper.isBefore(agency.getTicketExpire())) {
-                initAccessToken();
-                String url = AuthUtil.QR_CODE_TICKET_URL.replace("TOKEN", token.getAccessToken());
+                String url = AuthUtil.QR_CODE_TICKET_URL.replace("TOKEN", getAccessToken());
                 HttpHeaders headers = new HttpHeaders();
                 MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
                 headers.setContentType(type);
@@ -172,9 +160,9 @@ public class WechatAuthServiceImpl implements WechatAuthService {
                 String ticket = node.get("ticket").asText();
                 agency.setTicket(ticket);
                 agency.setTicketExpire(DateHelper.plusSecond(node.get("expire_seconds").asInt()));
-                this.repository.save(agency);
+                agency = this.repository.save(agency);
             }
-            return agency.getTicket();
+            return agency;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -186,20 +174,13 @@ public class WechatAuthServiceImpl implements WechatAuthService {
     public WechatConfig getWechatConfig(String referer) {
         try {
             WechatConfig config = new WechatConfig();
-            if(jsSdkTicket == null || DateHelper.isBefore(jsSdkTicket.getExpiresDate())) {
-                initAccessToken();
-                String url=AuthUtil.JS_API_TICKET_URL.replace("ACCESS_TOKEN", token.getAccessToken());
-                ResponseEntity<String> result = restTemplate.getForEntity(url, String.class);
-                jsSdkTicket = JsonUtil.json2pojo(result.getBody(),AccessToken.class);
-                jsSdkTicket.setExpiresDate(DateHelper.plusSecond(token.getExpiresIn()));
-            }
             config.setNonceStr(RandomStringUtils.random(24, true, true));
-            config.setTimestamp(System.currentTimeMillis());
+            config.setTimestamp(System.currentTimeMillis() / 1000);
             config.setAppId(AuthUtil.APP_ID);
-            String signStr = "jsapi_ticket="+ jsSdkTicket.getTicket() +"&noncestr=" +
-                    config.getNonceStr()+"&timeStamp="+ config.getTimestamp() +"&url="+referer;
-
+            String signStr = "jsapi_ticket="+ getJsSdkTicket() +"&noncestr=" +
+                    config.getNonceStr()+"&timestamp="+ config.getTimestamp() +"&url="+referer;
             config.setSignature(HashUtils.getSHA1(signStr));
+            log.info("微信页面加载参数: {}, 加密之前的值: {}", config, signStr);
             return config;
         } catch (Exception e) {
             e.printStackTrace();
@@ -249,9 +230,8 @@ public class WechatAuthServiceImpl implements WechatAuthService {
 
     private void sendTradeMessage(String wechatId, Agency agency, Map<String, String> result, Trade trade) {
         try {
-            initAccessToken();
             Date payEnd = DateHelper.format(result.get("time_end"), "yyyyMMddHHmmss");
-            String url = AuthUtil.MESSAGE_SEND_URL.replace("ACCESS_TOKEN", token.getAccessToken());
+            String url = AuthUtil.MESSAGE_SEND_URL.replace("ACCESS_TOKEN", getAccessToken());
             HttpHeaders headers = new HttpHeaders();
             MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
             headers.setContentType(type);
@@ -386,8 +366,7 @@ public class WechatAuthServiceImpl implements WechatAuthService {
     @Override
     public void sendShippingMessage(TradeForm tradeForm) {
         try {
-            initAccessToken();
-            String url = AuthUtil.MESSAGE_SEND_URL.replace("ACCESS_TOKEN", token.getAccessToken());
+            String url = AuthUtil.MESSAGE_SEND_URL.replace("ACCESS_TOKEN", getAccessToken());
             HttpHeaders headers = new HttpHeaders();
             MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
             headers.setContentType(type);
@@ -403,5 +382,31 @@ public class WechatAuthServiceImpl implements WechatAuthService {
         } catch (Exception e) {
             log.error("发送物流信息错误", e);
         }
+    }
+
+    private String getAccessToken() throws Exception {
+        String accessToken = weChatCache.getIfPresent("WX_ACCESS_TOKEN_KEY");
+        if(StringUtils.isBlank(accessToken)) {
+            String url = AuthUtil.ACCESS_TOKEN_URL.replace("APPID", AuthUtil.APP_ID)
+                    .replace("APPSECRET", AuthUtil.APP_SECRET);
+            ResponseEntity<String> result = restTemplate.getForEntity(url, String.class);
+            log.info(result.toString());
+            AccessToken token = JsonUtil.json2pojo(result.getBody(),AccessToken.class);
+            weChatCache.put("WX_ACCESS_TOKEN_KEY", token.getAccessToken());
+            log.info("AccessToken: {}", token);
+        }
+        return weChatCache.getIfPresent("WX_ACCESS_TOKEN_KEY");
+    }
+
+    private String getJsSdkTicket() throws Exception {
+        String jsSdkTicket = weChatCache.getIfPresent("WX_JS_SDK_TICKET");
+        if(StringUtils.isBlank(jsSdkTicket)) {
+            String url=AuthUtil.JS_API_TICKET_URL.replace("ACCESS_TOKEN", getAccessToken());
+            ResponseEntity<String> result = restTemplate.getForEntity(url, String.class);
+            AccessToken jsSdkToken = JsonUtil.json2pojo(result.getBody(),AccessToken.class);
+            log.info("jsSdkToken: {}", jsSdkToken);
+            weChatCache.put("WX_JS_SDK_TICKET", jsSdkToken.getTicket());
+        }
+        return weChatCache.getIfPresent("WX_JS_SDK_TICKET");
     }
 }
