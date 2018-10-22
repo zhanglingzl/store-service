@@ -213,8 +213,11 @@ public class WechatAuthServiceImpl implements WechatAuthService {
             Agency agency = this.findAgencyByWechatId(result.get("openid"));
             Agency parentAgency = this.findAgencyById(agency.getParentId());
             Trade temp = this.tradeService.findTradeByTradeNo(result.get("out_trade_no"));
-            this.sendTradeMessage(agency.getWechatId(),agency, result, temp);
-            if(agency.getParentId() != null && agency.getParentId() != 10000) {
+            if(agency != null) {
+                this.sendTradeMessage(agency.getWechatId(),agency, result, temp);
+            }
+
+            if(parentAgency != null && agency.getParentId() != null && agency.getParentId() != 10000) {
                 this.sendTradeMessage(parentAgency.getWechatId(), agency, result, temp);
             }
 
@@ -266,7 +269,7 @@ public class WechatAuthServiceImpl implements WechatAuthService {
             String message = restTemplate.postForObject(url, entity, String.class);
             log.info(message);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("发送微信订单通知错误, {}", e.getMessage());
         }
     }
 

@@ -117,7 +117,8 @@ public class TradeServiceImpl implements TradeService {
         List<Trade> expireTimeTrades = tradeRepository.findAllByPayStatusAndCreateTimeBefore(0, before);
         expireTimeTrades.forEach(trade -> {
             log.info("超过时间没有支付的订单: {}", trade.toString());
-            this.tradeRepository.delete(trade);
+            //this.tradeRepository.delete(trade);
+            this.tradeRepository.updatePayStatusByTradeNo(-2, trade.getTradeNo());
 
         });
     }
@@ -188,5 +189,19 @@ public class TradeServiceImpl implements TradeService {
                         .format(trade.getCreateTime(),"yyyy-MM-dd")));
         Map<String, TransactionStatisticsDTO> statisticsDTOMap = new LinkedHashMap<>();
         return null;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateAgencyLevelByTrade() {
+        List<Trade> trades = this.tradeRepository.findTradeByPayStatusAndAgencyLevel(1, 0);
+        Map<Long, BigDecimal> tradeMap = trades.stream().collect(Collectors.groupingBy((Trade trade) -> trade.getAgency().getId(),
+                Collectors.mapping(Trade::getPayableAmount, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add))));
+        tradeMap.forEach((agencyId, amount) -> {
+            if(new BigDecimal("300").subtract(amount).compareTo(BigDecimal.ZERO) < 0) {
+                log.info("交易金额 {} > 300, 会员ID {}", amount, agencyId);
+                this.agencyService.updateAgencyLevelById(agencyId);
+            }
+        });
     }
 }

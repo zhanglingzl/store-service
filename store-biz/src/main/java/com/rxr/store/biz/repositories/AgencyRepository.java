@@ -50,4 +50,8 @@ public interface AgencyRepository extends BaseRepository<Agency, Long>{
     @Query("update Agency set parentId=?1 where id=?2")
     int changeParent(Long parentId, Long id);
 
+    @Modifying
+    @Query("update Agency set level = :level where id = :id")
+    void updateAgencyLevelById(@Param("level") Integer level, @Param("id") Long id );
+
 }

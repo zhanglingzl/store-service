@@ -259,6 +259,12 @@ public class AgencyServiceImpl implements AgencyService{
         agencyRepository.changeParent(parentId, id);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateAgencyLevelById(Long agencyId) {
+        agencyRepository.updateAgencyLevelById(1, agencyId);
+    }
+
     private void getChildAgencyHql(Root<Agency> root, CriteriaBuilder criteriaBuilder,
                                    Predicate predicate, List<Long> parentId) {
         if (parentId.size() > 0) {

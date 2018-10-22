@@ -20,6 +20,7 @@ sotre:
 
 tasks:
   com.rxr.store.web.job.PayStatusJob: 0 0/10 * * * ?
+  com.rxr.store.web.job.ChangeAgencyLevelJob: 0 0/5 * * * ?
 #mybatis配置
 #mybatis:
 #  type-aliases-package: com.rxr.store.common.entity

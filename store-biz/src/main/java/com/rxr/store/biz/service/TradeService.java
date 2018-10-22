@@ -31,4 +31,6 @@ public interface TradeService {
     void updateShipping(TradeForm tradeForm);
 
     TransactionStatisticsDTO findTransactionStatistics();
+
+    void updateAgencyLevelByTrade();
 }

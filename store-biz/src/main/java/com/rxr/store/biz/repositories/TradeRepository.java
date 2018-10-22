@@ -40,4 +40,10 @@ public interface TradeRepository extends BaseRepository<Trade, Long> {
     Map<String, Object> findTradeByPayStatus(@Param("payStatus") Integer payStatus);
 
     List<Trade> findAllByPayStatusAndCreateTimeBetween(Integer payStatus, Date before, Date end);
+
+    @Modifying
+    @Query("update Trade set payStatus = :payStatus where tradeNo = :tradeNo")
+    void updatePayStatusByTradeNo(@Param("payStatus") Integer payStatus, @Param("tradeNo") String tradeNo);
+
+    List<Trade> findTradeByPayStatusAndAgencyLevel(Integer payStatus, Integer agencyLevel);
 }

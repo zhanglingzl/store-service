@@ -6,7 +6,6 @@ import com.rxr.store.common.dto.WalletDTO;
 import com.rxr.store.common.entity.Agency;
 import com.rxr.store.common.entity.DigitalWallet;
 import com.rxr.store.common.entity.Withdraw;
-import com.rxr.store.common.form.AgencyForm;
 import com.rxr.store.common.form.WalletForm;
 import com.rxr.store.common.util.NumberHelper;
 import com.rxr.store.web.common.dto.PageData;
@@ -16,9 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-;
-
 @RestController
 public class DigitalWalletController {
     private final DigitalWalletService digitalWalletService;

@@ -67,4 +67,6 @@ public interface AgencyService {
      * @param parentId 代理等级
      */
     void changeParent(Long id, Long parentId);
+
+    void updateAgencyLevelById(Long agencyId);
 }
