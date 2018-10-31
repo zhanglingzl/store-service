@@ -50,6 +50,14 @@ public class AgencyServiceImpl implements AgencyService{
                 predicate.getExpressions()
                         .add(criteriaBuilder.like(root.get("telephone"),"%" + agencyForm.getTelephone()+"%"));
             }
+            if(agencyForm.getId() != null && agencyForm.getId() != 0) {
+                predicate.getExpressions()
+                        .add(criteriaBuilder.equal(root.get("id"), agencyForm.getId()));
+            }
+            if(agencyForm.getParentId() != null && agencyForm.getParentId() != 0) {
+                predicate.getExpressions()
+                        .add(criteriaBuilder.equal(root.get("parentId"), agencyForm.getParentId()));
+            }
             predicate.getExpressions().add(criteriaBuilder.notEqual(root.get("id"), 10000));
             return predicate;
         });
@@ -263,6 +271,16 @@ public class AgencyServiceImpl implements AgencyService{
     @Transactional(rollbackFor = Exception.class)
     public void updateAgencyLevelById(Long agencyId) {
         agencyRepository.updateAgencyLevelById(1, agencyId);
+    }
+
+    @Override
+    public List<Agency> getAgenciseByParentId(Long parentId) {
+        List<Agency> agencyList = agencyRepository.findAgenciesByParentId(parentId);
+        Map<Long, List<Agency>> childrenMap = agencyRepository.findAll().stream()
+        .filter(agency -> agency.getParentId() != null)
+        .collect(Collectors.groupingBy(Agency::getParentId));
+        agencyList.forEach(agency -> getChildren(agency, childrenMap));
+        return agencyList;
     }
 
     private void getChildAgencyHql(Root<Agency> root, CriteriaBuilder criteriaBuilder,

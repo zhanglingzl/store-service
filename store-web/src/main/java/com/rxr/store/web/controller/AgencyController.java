@@ -71,6 +71,12 @@ public class AgencyController {
         Agency agency = this.agencyService.findAgencyById(agencyId);
         return RestResponse.success(agency);
     }
+
+    @GetMapping("/agency/{parentId}")
+    public RestResponse<List<Agency>> getAgenciseByParentId(@PathVariable("parentId") Long parentId) {
+        List<Agency> agencyList = agencyService.getAgenciseByParentId(parentId);
+        return RestResponse.success(agencyList);
+    }
     @PutMapping("/agency/edit")
     public RestResponse<Agency> updateAgency(@RequestBody AgencyForm agencyForm) {
         this.agencyService.updateAgency(agencyForm);

@@ -1,5 +1,8 @@
 package com.rxr.store.common.util;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.IsoFields;
@@ -10,6 +13,27 @@ import java.util.Date;
  * 时间辅助类
  */
 public class DateHelper {
+
+    public static final String FORMAT_YMD_PATTERN = "yyyy-MM-dd";
+    public static final String FORMAT_YM_PATTERN = "yyyy-MM";
+
+    private static DateFormat ymdFormatInstance = null;
+
+    private static DateFormat ymFormatInstance = null;
+
+    public static synchronized DateFormat getYmdFormatInstance() {
+        if (null == ymdFormatInstance) {
+            ymdFormatInstance = new SimpleDateFormat(FORMAT_YMD_PATTERN);
+        }
+        return ymdFormatInstance;
+    }
+
+    public static synchronized DateFormat getYmFormatInstance() {
+        if (null == ymFormatInstance) {
+            ymFormatInstance = new SimpleDateFormat(FORMAT_YM_PATTERN);
+        }
+        return ymFormatInstance;
+    }
 
     /**
      *
@@ -118,9 +142,9 @@ public class DateHelper {
 
     public static String serialDateCode() {
         LocalDate localDate = LocalDate.now();
-        String year = String.valueOf(localDate.getYear()).substring(2,4);
+        String year = String.valueOf(localDate.getYear()).substring(2, 4);
         String week = String.valueOf(localDate.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR));
-        return year+week;
+        return year + week;
     }
 
     /**
@@ -152,6 +176,7 @@ public class DateHelper {
         lastDay = LocalDateTime.of(lastDay.toLocalDate(),LocalTime.of(23,59,59));
         return localDateTimeToDate(lastDay);
     }
+
     public static Date getFirstDayofMounth() {
         return getFirstDayofMounth(null);
     }
@@ -174,19 +199,80 @@ public class DateHelper {
 
     public static Date plusMonths(Date date, int month) {
         LocalDateTime localDateTime = dateToLocalDateTime(date);
-        LocalDateTime temp = LocalDateTime.of(localDateTime.plusMonths(month).toLocalDate(),localDateTime.toLocalTime());
+        LocalDateTime temp = LocalDateTime.of(localDateTime.plusMonths(month).toLocalDate(), localDateTime.toLocalTime());
         return localDateTimeToDate(temp);
     }
-        public static void main(String[] args) {
-        Date date = new Date();
-        Date date1 = minusMinutes(date, 5);
-            System.out.println(DateHelper.isBefore(date1));
-        System.out.println(format(date1,"yyyy-MM-dd HH:mm:ss"));
-        Date date2 = getLastDayofMounth();
-        Date date3 = minusMinutes(date, 30);
-        System.out.println(format(date2,"yyyy-MM-dd HH:mm:ss"));
-            System.out.println(format(date3,"yyyy-MM-dd HH:mm:ss"));
+
+    /**
+     * 获取月第一天.
+     * <p>
+     * <p><code>step=0</code>获取当月，step为正整数表示获取当前月后几个月第一天，为负数表示当月向前.</p>
+     *
+     * @param step 步长(整数)
+     * @return 某月第一天
+     */
+    public static LocalDate getMonthFirstDay(long step) {
+        return LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()).plusMonths(step);
     }
 
+    /**
+     * 获取月最后一天.
+     * <p>
+     * <p><code>step=0</code>获取当月，step为正整数表示获取当前月后几个月第一天，为负数表示当月向前.</p>
+     *
+     * @param step 步长(整数)
+     * @return 某月最后一天
+     */
+    public static LocalDate getMonthLastDay(long step) {
+        return LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()).plusMonths(step);
+    }
 
+    /**
+     * 获取月第一天.
+     * <p>
+     * <p><code>step=0</code>获取当月，step为正整数表示获取当前月后几个月第一天，为负数表示当月向前.</p>
+     *
+     * @param step 步长(整数)
+     * @return 某月第一天
+     */
+    public static Date getMonthFirstDayToDate(long step) {
+        LocalDate localDate = LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()).plusMonths(step);
+        return covertLocalToDate(localDate);
+    }
+
+    /**
+     * 获取月最后一天.
+     * <p>
+     * <p><code>step=0</code>获取当月，step为正整数表示获取当前月后几个月第一天，为负数表示当月向前.</p>
+     *
+     * @param step 步长(整数)
+     * @return 某月最后一天
+     */
+    public static Date getMonthLastDayToDate(long step) {
+        LocalDate localDate = LocalDate.now().with(TemporalAdjusters.lastDayOfMonth()).plusMonths(step);
+        return covertLocalToDate(localDate);
+    }
+
+    /**
+     * 将日期格式化为yyyy-MM-dd 00:00:00
+     *
+     * @param date 日期
+     * @return 转换后的日期
+     */
+    public static Date convertDate(Date date) {
+        try {
+            return getYmFormatInstance().parse(getYmFormatInstance().format(date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Date covertLocalToDate(LocalDate localDate){
+        ZoneId zone = ZoneId.systemDefault();
+        Instant instant = localDate.atStartOfDay().atZone(zone).toInstant();
+        return Date.from(instant);
+    }
 }
+
+

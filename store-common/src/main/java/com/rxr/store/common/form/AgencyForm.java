@@ -16,5 +16,5 @@ public class AgencyForm {
     private String wechat;
     private String telephone;
     private String email;
-
+    private Long parentId;
 }

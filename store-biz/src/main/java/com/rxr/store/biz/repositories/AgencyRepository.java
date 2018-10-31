@@ -29,6 +29,13 @@ public interface AgencyRepository extends BaseRepository<Agency, Long>{
     Agency findAgenciesById(Long id);
 
     /**
+     * 通过父级ID获取代理信息
+     * @param parentId 父级ID
+     * @return 代理集合
+     */
+    List<Agency> findAgenciesByParentId(Long parentId);
+
+    /**
      * 通过ID跟新代理登录
      * @param id Id
      * @param level 代理等级
@@ -40,7 +47,7 @@ public interface AgencyRepository extends BaseRepository<Agency, Long>{
     int agencyUpgradeById(Integer level, Long id);
 
     /**
-     * 通过ID跟新父节点
+     * 通过ID更新父节点
      * @param id Id
      * @param parentId 父级Id
      * @return int

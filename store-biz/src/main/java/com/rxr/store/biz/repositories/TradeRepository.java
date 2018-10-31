@@ -2,12 +2,10 @@ package com.rxr.store.biz.repositories;
 
 import com.rxr.store.common.entity.Agency;
 import com.rxr.store.common.entity.Trade;
-import org.hibernate.sql.Select;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import javax.xml.crypto.Data;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -46,4 +44,16 @@ public interface TradeRepository extends BaseRepository<Trade, Long> {
     void updatePayStatusByTradeNo(@Param("payStatus") Integer payStatus, @Param("tradeNo") String tradeNo);
 
     List<Trade> findTradeByPayStatusAndAgencyLevel(Integer payStatus, Integer agencyLevel);
+
+    /**
+     * 根据参数条件获取交易信息
+     *
+     * @param payStatus 交易状态
+     * @param agencies 代理
+     * @param before 开始时间
+     * @param end 结束时间
+     * @return trade集合
+     */
+    List<Trade> findByPayStatusInAndAgencyInAndCreateTimeBetween(List<Integer> payStatus, List<Agency> agencies,
+                                                                 Date before, Date end);
 }

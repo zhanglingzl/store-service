@@ -69,4 +69,11 @@ public interface AgencyService {
     void changeParent(Long id, Long parentId);
 
     void updateAgencyLevelById(Long agencyId);
+
+    /**
+     * 通过父级ID获取代理信息
+     * @param parentId 父级ID
+     * @return list
+     */
+    List<Agency> getAgenciseByParentId(Long parentId);
 }
