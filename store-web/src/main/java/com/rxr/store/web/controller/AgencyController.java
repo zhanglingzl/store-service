@@ -72,8 +72,8 @@ public class AgencyController {
         return RestResponse.success(agency);
     }
 
-    @GetMapping("/agency/{parentId}")
-    public RestResponse<List<Agency>> getAgenciseByParentId(@PathVariable("parentId") Long parentId) {
+    @GetMapping("/agency/parentId")
+    public RestResponse<List<Agency>> getAgenciseByParentId(@RequestParam("parentId") Long parentId) {
         List<Agency> agencyList = agencyService.getAgenciseByParentId(parentId);
         return RestResponse.success(agencyList);
     }

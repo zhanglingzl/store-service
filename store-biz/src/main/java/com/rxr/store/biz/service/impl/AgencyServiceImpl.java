@@ -275,12 +275,7 @@ public class AgencyServiceImpl implements AgencyService{
 
     @Override
     public List<Agency> getAgenciseByParentId(Long parentId) {
-        List<Agency> agencyList = agencyRepository.findAgenciesByParentId(parentId);
-        Map<Long, List<Agency>> childrenMap = agencyRepository.findAll().stream()
-        .filter(agency -> agency.getParentId() != null)
-        .collect(Collectors.groupingBy(Agency::getParentId));
-        agencyList.forEach(agency -> getChildren(agency, childrenMap));
-        return agencyList;
+        return agencyRepository.findAgenciesByParentId(parentId);
     }
 
     private void getChildAgencyHql(Root<Agency> root, CriteriaBuilder criteriaBuilder,
